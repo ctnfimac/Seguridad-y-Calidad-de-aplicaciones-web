@@ -8,12 +8,12 @@
    <link href="css/estilos.css" rel="stylesheet">
 </head>
 <body>
-		<section id="section-login" class="py-5 p-0">
+		<section id="section-login" class="mt-5">
 			<div class="container  bg-light ">
 				<div class="row d-flex align-items-center justify-content-center rounded-sm">
-					<div class="col-xs-12 col-md-5 p-0">
+					<div class="col-xs-12 col-md-5">
 						<h3 class="text-center pb-3">Iniciar Sesión</h3>
-						<form:form action="validar-login" class="text-center px-5" method="POST" modelAttribute="usuario">
+						<form:form action="validar-login" class="text-center" method="POST" modelAttribute="usuario">
 							<form:input path="email" class="form-control mb-4" id="email" type="email" placeholder="Usuario o E-mail"/>
 							<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Password"/>     		  
 							<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Login</button>
@@ -21,9 +21,20 @@
 						<p class="text-center mt-4" data-toggle="modal" data-target="#exampleModal">¿No tenés una cuenta?<a href="#"> Registrarse</a></p>
 						<p class="text-center"><a href="#">¿Olvidaste tu contraseña?</a></p>
 						<c:if test="${not empty error}">
-					        <h5 class="text-center"><span>${error}</span></h5>
-					        <br>
+					        <div class="alert alert-dismissible alert-danger text-center py-2">
+							  ${error}!
+							</div>					  
 				        </c:if>	
+				        <c:if test="${(not empty msjregistro) && (errorRegistro==1)}">
+					        <div class="alert alert-dismissible alert-danger text-center py-2">
+							  ${msjregistro}!
+							</div>
+				        </c:if>
+				         <c:if test="${(not empty msjregistro) && (errorRegistro==0)}">
+					        <div class="alert alert-dismissible alert-success text-center py-2">
+							  ${msjregistro}!
+							</div>
+				        </c:if>
 						<!-- Default form login -->
 					</div>
 					<div class="col-xs-12 col-md-7 p-0 m-0 overflow-hidden" style="background-color:#10537f">
@@ -44,10 +55,17 @@
 		        </button>
 		      </div>
 		      <div class="modal-body pb-3">
-		        <form:form action="validar-login" class="text-center px-5" method="POST" modelAttribute="usuario">
-					<form:input path="email" class="form-control mb-4" id="email" type="email" placeholder="Usuario o E-mail"/>
-					<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Password"/>
-					<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Password"/>     		      		  
+		        <form:form action="registrar-usuario" class="text-center px-5" method="POST" modelAttribute="usuario">
+					<form:input path="email" class="form-control mb-4" id="email" type="email" placeholder="E-mail"/>
+					<form:input path="nombre" class="form-control mb-4" id="nombre" type="text" placeholder="nombre"/>
+					<div class="row">
+					    <div class="col">
+							<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Contraseña"/>
+					    </div>
+					    <div class="col">
+							<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Contraseña"/>     		      		  
+					    </div>
+					 </div>
 					<button class="btn btn-lg btn-success btn-block" Type="Submit"/>Registrar</button>
 				</form:form>
 		      </div>

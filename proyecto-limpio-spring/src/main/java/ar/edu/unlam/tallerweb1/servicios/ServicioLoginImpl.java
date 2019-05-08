@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
@@ -29,6 +31,16 @@ public class ServicioLoginImpl implements ServicioLogin {
 	@Override
 	public void cargarDatos() {
 		servicioLoginDao.cargarDatos();
+	}
+
+	@Override
+	public void registrarUsuario(Usuario usuario) {
+		servicioLoginDao.registrarUsuario(usuario);
+	}
+
+	@Override
+	public List<Usuario> obtenerUsuarios() {
+		return servicioLoginDao.obtenerUsuarios();
 	}
 
 }
