@@ -1,31 +1,29 @@
 package ar.edu.unlam.tallerweb1.modelo;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-// Clase que modela el concepto de Usuario, la anotacion @Entity le avisa a hibernate que esta clase es persistible
-// el paquete ar.edu.unlam.tallerweb1.modelo esta indicado en el archivo hibernateCOntext.xml para que hibernate
-// busque entities en él
 @Entity
 public class Usuario {
 
-	// La anotacion id indica que este atributo es el utilizado como clave primaria de la entity, se indica que el valor es autogenerado.
 	@Id
-	@GeneratedValue/*(strategy = GenerationType.IDENTITY)*/
+	@GeneratedValue
 	private Long id;
-	// para el resto de los atributo no se usan anotaciones entonces se usa el default de hibernate: la columna se llama igual que
-	// el atributo, la misma admite nulos, y el tipo de dato se deduce del tipo de dato de java.
 	@Column(unique = true)
 	private String email;
 	private String nombre;
 	private String password;
 	@Transient
 	private String password2;
-	private String rol = "user";		// user - admin
-	private Boolean estado = true; // true: habilitado, false: deshabilitado
+	private String rol = "user";	   // user - admin
+	private Boolean habilitado = true; // true: habilitado, false: deshabilitado
+	private Date fechaAltaDeUsuario;
+	private Date fechaUltimaModificacion;
 	
 	public Usuario(){}
 	
@@ -35,12 +33,12 @@ public class Usuario {
 		this.rol = rol;
 	}
 	
-	public Usuario(String email, String nombre, String password, String rol, Boolean estado) {
+	public Usuario(String email, String nombre, String password, String rol, Date fechaAltaDeUsuario) {
 		this.email = email;
 		this.nombre = nombre;
 		this.password = password;
 		this.rol = rol;
-		this.estado = estado;
+		this.fechaAltaDeUsuario = fechaAltaDeUsuario;
 	}
 
 	public Long getId() {
@@ -87,12 +85,29 @@ public class Usuario {
 		this.nombre = nombre;
 	}
 
-	public Boolean getEstado() {
-		return estado;
+	public Boolean getHabilitado() {
+		return habilitado;
 	}
 
-	public void setEstado(Boolean estado) {
-		this.estado = estado;
+	public void setHabilitado(Boolean habilitado) {
+		this.habilitado = habilitado;
 	}
+	
+	public Date getFechaAltaDeUsuario() {
+		return fechaAltaDeUsuario;
+	}
+
+	public void setFechaAltaDeUsuario(Date fechaAltaDeUsuario) {
+		this.fechaAltaDeUsuario = fechaAltaDeUsuario;
+	}
+
+	public Date getFechaUltimaModificacion() {
+		return fechaUltimaModificacion;
+	}
+
+	public void setFechaModificacion(Date fechaUltimaModificacion) {
+		this.fechaUltimaModificacion = fechaUltimaModificacion;
+	}
+	
 	
 }
