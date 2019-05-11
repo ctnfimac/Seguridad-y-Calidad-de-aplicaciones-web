@@ -13,12 +13,20 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
+import ar.edu.unlam.tallerweb1.servicios.ServicioNota;
+import ar.edu.unlam.tallerweb1.servicios.ServicioUsuario;
 
 @Controller
 public class ControladorUsuario {
 	
 	@Inject
 	private ServicioLogin servicioLogin;
+	
+	@Inject
+	private ServicioUsuario servicioUsuario;
+	
+	@Inject
+	private ServicioNota servicioNota;
 	
 	@RequestMapping(path="/usuario")
 	public ModelAndView irAusuario(){
@@ -55,6 +63,73 @@ public class ControladorUsuario {
 		return new ModelAndView("login",modelo);
 	}
 	
+	@RequestMapping(path="/cambiar-contraseña", method = RequestMethod.POST)
+	public ModelAndView cambiarContraseña(Long idUsuario, String contraseniaAnt, String contraseniaNueva){
+		ModelMap modelo = new ModelMap();
+		
+		try{
+			if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
+					
+				if(contraseniaAnt != contraseniaNueva){
+						servicioUsuario.cambiarContrasenia(idUsuario, contraseniaNueva );
+					}
+					else{
+						modelo.put("errorCambio", 1);
+						modelo.put("msjcambio", "las contraseñas son distintas");
+					}
+			}else{
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "complete todos los campos");
+			}
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			modelo.put("errorCambio", 1);
+			modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
+		}
+		
+		return new ModelAndView("usuario",modelo);
+	}
+	
+	@RequestMapping(path="/recuperar-contraseña", method = RequestMethod.POST)
+	public ModelAndView recuperarContraseña(Long idUsuario){
+		ModelMap modelo = new ModelMap();
+		
+		Boolean recuperoExitoso = servicioUsuario.recuperarContrasenia(idUsuario);
+		
+		try{
+			if(recuperoExitoso == true){
+				
+				modelo.put("errorRecupero", 1);
+				modelo.put("msjRecupero", "Se ha enviado un mail de recuperación.");
+				
+			}else{
+				modelo.put("errorRecupero", 1);
+				modelo.put("msjRecupero", "El usuario no se encuentra registrado.");
+			}
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			modelo.put("errorRecupero", 1);
+			modelo.put("msjRecupero", "Hubo problemas para recuperar la contraseña");
+		}
+		
+		return new ModelAndView("usuario",modelo);
+	}
+	
+	@RequestMapping(path="/ingresar-texto", method = RequestMethod.POST)
+	public ModelAndView ingresarTexto(Long idUsuario, String texto){
+		ModelMap modelo = new ModelMap();
+		
+		if(!texto.isEmpty()) {
+			
+			servicioNota.nuevaNota(idUsuario, texto);
+			
+		}else {
+			modelo.put("errorIngreso", 1);
+			modelo.put("msjIngreso", "Debe Ingresar un texto.");
+		}
+
+		return new ModelAndView("usuario",modelo);
+	}
 //	ayuda para ver por consola que usuarios estan registrados
 //	@RequestMapping(path="/mostrarusuarios")
 //	public ModelAndView mostrarUsuarios(){

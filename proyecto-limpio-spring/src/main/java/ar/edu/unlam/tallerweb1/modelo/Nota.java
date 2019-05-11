@@ -19,13 +19,15 @@ public class Nota {
 	
 	private Date fechaAlta;
 	private Date fechaModificacion;
+	private String Descripcion;
 	
 	public Nota(){}
 
-	public Nota(Usuario usuario, Date fechaAlta, Date fechaModificacion) {
+	public Nota(Usuario usuario, Date fechaAlta, Date fechaModificacion, String nota) {
 		this.usuario = usuario;
 		this.fechaAlta = fechaAlta;
 		this.fechaModificacion = fechaModificacion;
+		this.Descripcion = nota;
 	}
 
 	public Long getId() {
@@ -58,6 +60,14 @@ public class Nota {
 
 	public void setFechaModificacion(Date fechaModificacion) {
 		this.fechaModificacion = fechaModificacion;
+	}
+
+	public String getDescripcion() {
+		return Descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		Descripcion = descripcion;
 	}
 	
 	

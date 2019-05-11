@@ -11,4 +11,6 @@ public interface UsuarioDao {
 	void cargarDatos();
 	void registrarUsuario(Usuario usuario);
 	List<Usuario> obtenerUsuarios();
+	Usuario GetUsuarioById(Long idUsuario);
+	void cambiarContrasenia(Long idUsuario, String contrasenia);
 }

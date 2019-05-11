@@ -7,7 +7,9 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ar.edu.unlam.tallerweb1.dao.LogDao;
 import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
+import ar.edu.unlam.tallerweb1.modelo.Log;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
 // Implelemtacion del Servicio de usuarios, la anotacion @Service indica a Spring que esta clase es un componente que debe
@@ -21,26 +23,43 @@ import ar.edu.unlam.tallerweb1.modelo.Usuario;
 public class ServicioLoginImpl implements ServicioLogin {
 
 	@Inject
-	private UsuarioDao servicioLoginDao;
+	private UsuarioDao servicioUsuarioDao;
+	@Inject
+	private ServicioLog servicioLog;
 
 	@Override
 	public Usuario consultarUsuario (Usuario usuario) {
-		return servicioLoginDao.consultarUsuario(usuario);
+		return servicioUsuarioDao.consultarUsuario(usuario);
 	}
 
 	@Override
 	public void cargarDatos() {
-		servicioLoginDao.cargarDatos();
+		servicioUsuarioDao.cargarDatos();
 	}
 
 	@Override
 	public void registrarUsuario(Usuario usuario) {
-		servicioLoginDao.registrarUsuario(usuario);
+		
+		servicioUsuarioDao.registrarUsuario(usuario);
+		
+		String mensajeLog;
+		mensajeLog = String.format("\"El usuario %u se registro en la aplicacion. ", usuario.getId());
+		
+		servicioLog.guardarLog(usuario.getId(), "Regristro de usuario", mensajeLog );
 	}
 
 	@Override
 	public List<Usuario> obtenerUsuarios() {
-		return servicioLoginDao.obtenerUsuarios();
+		return servicioUsuarioDao.obtenerUsuarios();
+	}
+
+	@Override
+	public void saveLogIngreso(Long idUsuario) {
+		
+		String mensajeLog;
+		mensajeLog = String.format("\"El usuario %u se logeo en la aplicacion. ", idUsuario);
+		
+		servicioLog.guardarLog(idUsuario, "Login", mensajeLog );	
 	}
 
 }

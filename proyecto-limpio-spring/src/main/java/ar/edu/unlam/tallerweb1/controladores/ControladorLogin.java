@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.edu.unlam.tallerweb1.modelo.Funcionalidad;
+import ar.edu.unlam.tallerweb1.modelo.Log;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
+import ar.edu.unlam.tallerweb1.servicios.ServicioLog;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
 
 @Controller
@@ -22,23 +25,13 @@ public class ControladorLogin {
 	@Inject
 	private ServicioLogin servicioLogin;
 	
-	@RequestMapping("/cargarDatos")
-	public ModelAndView cargarDatos(){
-		servicioLogin.cargarDatos();
-		return new ModelAndView("redirect: login");
-	}
-
 	// Este metodo escucha la URL localhost:8080/NOMBRE_APP/login si la misma es invocada por metodo http GET
 	@RequestMapping("/login")
 	public ModelAndView irALogin() {
-
 		ModelMap modelo = new ModelMap();
-		// Se agrega al modelo un objeto del tipo Usuario con key 'usuario' para que el mismo sea asociado
-		// al model attribute del form que esta definido en la vista 'login'
+		servicioLogin.cargarDatos();
 		Usuario usuario = new Usuario();
 		modelo.put("usuario", usuario);
-		// Se va a la vista login (el nombre completo de la lista se resuelve utilizando el view resolver definido en el archivo spring-servlet.xml)
-		// y se envian los datos a la misma  dentro del modelo
 		return new ModelAndView("login", modelo);
 	}
 
@@ -54,7 +47,14 @@ public class ControladorLogin {
 		Usuario usuarioBuscado = servicioLogin.consultarUsuario(usuario);
 		if (usuarioBuscado != null) {
 			request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
-			return new ModelAndView("redirect:/home");
+			
+			servicioLogin.saveLogIngreso(usuarioBuscado.getId());
+			
+			if(usuarioBuscado.getRol() == "admin")
+				return new ModelAndView("redirect:/admin");
+			else
+				return new ModelAndView("redirect:/usuario");
+			
 		} else {
 			// si el usuario no existe agrega un mensaje de error en el modelo.
 			model.put("error", "Usuario o clave incorrecta");
