@@ -11,8 +11,7 @@
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 	<link rel="stylesheet" href="css/admin.css" >
 </head>
-<body>
-	
+<body>	
 		<nav class="navbar navbar-expand navbar-dark static-top d-flex justify-content-between" style="background-color:#3c8dbc">
 			<a class="navbar-brand mr-1" href="usuario">Usuario</a>  
 		   <ul class="navbar-nav ml-auto ml-md-0">

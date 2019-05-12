@@ -12,6 +12,7 @@ import ar.edu.unlam.tallerweb1.dao.LogDao;
 import ar.edu.unlam.tallerweb1.dao.NotaDao;
 import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
 import ar.edu.unlam.tallerweb1.modelo.Funcionalidad;
+import ar.edu.unlam.tallerweb1.modelo.Log;
 import ar.edu.unlam.tallerweb1.modelo.Nota;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
@@ -44,7 +45,11 @@ public class ServicioNotaImpl implements ServicioNota{
 		String mensajeLog;
 		mensajeLog = String.format("\"El usuario %s ingreso una nueva nota. ", Long.toString(idUsuario));
 
-		servicioLog.guardarLog(idUsuario, funcionalidad, mensajeLog);
-		
+		servicioLog.guardarLog(idUsuario, funcionalidad, mensajeLog);		
+	}
+	
+	@Override
+	public List<Nota> getByUsuario(Long idUsuario) {
+		return notaDao.getByUsuario(idUsuario);
 	}
 }

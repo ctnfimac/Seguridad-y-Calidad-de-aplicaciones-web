@@ -68,7 +68,5 @@ public class Nota {
 
 	public void setDescripcion(String descripcion) {
 		Descripcion = descripcion;
-	}
-	
-	
+	}	
 }

@@ -29,4 +29,14 @@ public class NotaDaoImpl implements NotaDao {
 		session.save(nota);	
 	}
 
+	@Override
+	public List<Nota> getByUsuario(Long idUsuario) {
+		final Session session = sessionFactory.getCurrentSession();
+		List<Nota> notas = session.createCriteria(Nota.class)
+							.createAlias("usuario", "usuarioBuscado")
+							.add(Restrictions.eq("usuarioBuscado.id", idUsuario))
+							.list();
+		
+		return notas;		
+	}
 }

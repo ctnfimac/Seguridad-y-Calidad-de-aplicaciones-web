@@ -8,4 +8,5 @@ public interface NotaDao {
 
 	void guardarNota(Nota nota);
 	
+	List<Nota> getByUsuario(Long idUsuario);
 }

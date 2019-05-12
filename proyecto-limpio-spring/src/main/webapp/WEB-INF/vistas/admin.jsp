@@ -42,7 +42,7 @@
 					<!-- DataTables Example -->
 					<div class="card">
 					  <div class="card-header ">
-						Tabla de clientes
+						Usuarios Registrados
 					  </div>
 					  <div class="card-body white pt-0">
 						<div class="table-responsive">

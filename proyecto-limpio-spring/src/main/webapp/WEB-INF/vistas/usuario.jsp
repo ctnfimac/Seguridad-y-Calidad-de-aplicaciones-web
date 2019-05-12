@@ -1,3 +1,5 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -61,10 +63,12 @@
 							  </tr>
 							</thead>
 							<tbody>
-							  <tr>
-								<td class="align-middle">07-05-2019</td>
-								<td class="align-middle">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec urna erat, dictum id elit vitae, rutrum dignissim massa. Etiam gravida mauris sed nunc cursus suscipit. Aliquam erat volutpat.</td>
-							  </tr> 
+								<c:forEach items = "${notas}"  var="nota">
+								  <tr>
+									<td class="align-middle">${nota.getFechaModificacion()}</td>
+									<td class="align-middle">${nota.getDescripcion()}</td>
+								  </tr> 
+								</c:forEach>
 							</tbody>
 						  </table>
 						</div>
@@ -88,12 +92,12 @@
 		        </button>
 		      </div>
 		      <div class="modal-body pb-3">
-		        <form action="registrar-usuario" class="text-center px-5" method="POST" modelAttribute="usuario">
+		        <form:form action="registrar-nota" class="text-center px-5" method="POST" modelAttribute="nota">
 					<div class="form-group">
-					    <textarea class="form-control" id="nota" rows="3"></textarea>
+					    <form:textarea path="Descripcion" class="form-control" id="Descripcion" rows="3"></form:textarea>
 					</div>
-					<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Agregar</button>
-				</form>
+					<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Crear Nota</button>
+				</form:form>
 		      </div>
 		    </div>
 		  </div>

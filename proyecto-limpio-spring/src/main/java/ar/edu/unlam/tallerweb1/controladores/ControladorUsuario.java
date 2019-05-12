@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.unlam.tallerweb1.modelo.Log;
+import ar.edu.unlam.tallerweb1.modelo.Nota;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLog;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
@@ -35,7 +37,15 @@ public class ControladorUsuario {
 	
 	@RequestMapping(path="/usuario")
 	public ModelAndView irAusuario(){
-		return new ModelAndView("usuario");
+		ModelMap modelo = new ModelMap();
+		
+		Nota nota = new Nota();
+		modelo.put("nota", nota);
+
+		List<Nota> notasUsuario = servicioNota.getByUsuario((long)2);
+		modelo.put("notas", notasUsuario);
+		
+		return new ModelAndView("usuario", modelo);
 	}
 	
 	@RequestMapping(path="/usuario-historial")
@@ -75,6 +85,33 @@ public class ControladorUsuario {
 		Usuario usuario = new Usuario();
 		modelo.put("usuario", usuario);
 		return new ModelAndView("login",modelo);
+	}
+	
+	@RequestMapping(path="/registrar-nota", method = RequestMethod.POST)
+	public ModelAndView registrarNota(@ModelAttribute("nota") Nota nuevaNota){
+		ModelMap modelo = new ModelMap();
+		try{
+			if(!nuevaNota.getDescripcion().isEmpty()){
+				servicioNota.nuevaNota((long)2, nuevaNota.getDescripcion());
+				modelo.put("errorRegistro", 0);
+				modelo.put("msjregistro", "se registro exitosamente");
+			}else{
+				modelo.put("errorRegistro", 1);
+				modelo.put("msjregistro", "complete todos los campos");
+			}
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			modelo.put("errorRegistro", 1);
+			modelo.put("msjregistro", "Hubo problemas para dar de alta su nota");
+		}
+		
+		Nota nota = new Nota();
+		modelo.put("nota", nota);
+
+		List<Nota> notasUsuario = servicioNota.getByUsuario((long)2);
+		modelo.put("notas", notasUsuario);
+		
+		return new ModelAndView("usuario", modelo);
 	}
 	
 	@RequestMapping(path="/cambiar-contraseña", method = RequestMethod.POST)

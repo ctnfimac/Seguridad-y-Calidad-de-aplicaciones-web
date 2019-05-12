@@ -28,8 +28,8 @@ public class LogDaoImpl implements LogDao {
 	public List<Log> getLogByUsuario(Long idUsuario) {
 		final Session session = sessionFactory.getCurrentSession();
 		return  session.createCriteria(Log.class)
-				//.createAlias("usuario", "usuarioBuscado")
-				//.add(Restrictions.eq("usuarioBuscado.id", idUsuario))
+				.createAlias("usuario", "usuarioBuscado")
+				.add(Restrictions.eq("usuarioBuscado.id", idUsuario))
 				.list();
 	}
 }
