@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <html lang="es">
 <head>
 	<meta charset="utf-8" />
@@ -57,16 +59,18 @@
 							<thead>
 							  <tr>
 							  	<th class="align-middle">Funcionalidad</th>
-								<th class="align-middle">Fecha y Hora</th>
 								<th class="align-middle">Descripción</th><!-- creo que la descripcion cumple el mismo rol que la funcionalidad -->
+								<th class="align-middle">Fecha y Hora</th>
 							  </tr>
 							</thead>
 							<tbody>
-							  <tr>
-								<td class="align-middle">Agregar Nota</td>
-								<td class="align-middle">12-05-2019 2:36</td>
-								<th class="align-middle">Agregaste una nota</th> 
-							  </tr> 
+								<c:forEach items = "${logsUsuario}" var="log">
+								  <tr>
+									<td class="align-middle">${log.getFuncionalidad().getDescripcion()}</td>
+									<td class="align-middle">${log.getFechaModificacion()}</td>
+									<th class="align-middle">${log.getDescripcion()}</th> 
+								  </tr> 
+								</c:forEach>
 							</tbody>
 						  </table>
 						</div>

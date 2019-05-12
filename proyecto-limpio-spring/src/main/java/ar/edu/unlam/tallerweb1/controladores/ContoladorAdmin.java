@@ -27,7 +27,7 @@ public class ContoladorAdmin {
 		ModelMap modelo = new ModelMap();
 		List<Usuario> usuarios = servicioAdmin.listarUsuarios();
 		modelo.put("usuarios", usuarios);
-		return new ModelAndView("admin",modelo);
+		return new ModelAndView("admin", modelo);
 	}
 	
 	@RequestMapping(path="/admin-historial", method= RequestMethod.GET)

@@ -56,11 +56,11 @@ public class UsuarioDaoImpl implements UsuarioDao {
 			Funcionalidad verActividadUsuarios = new Funcionalidad("Ver Historial de usuarios");
 			
 			Usuario usuario1 = new Usuario("admin@admin.com", "admin", "admin");
-			Usuario usuario2 = new Usuario("ignacio@user.com", "123456", "user");
-			Usuario usuario3 = new Usuario("user@user.com", "123", "user");
+			Usuario usuario2 = new Usuario("usuario1@usuario1.com", "123456", "user");
+			Usuario usuario3 = new Usuario("usuario2@usuario2.com", "123456", "user");
 			usuario1.setNombre("admin");
-			usuario2.setNombre("ignacio");
-			usuario3.setNombre("user");
+			usuario2.setNombre("usuario1");
+			usuario3.setNombre("usuario2");
 			usuario3.setHabilitado(false);
 			usuario1.setFechaAltaDeUsuario(new Date());
 			usuario2.setFechaAltaDeUsuario(new Date());
@@ -126,10 +126,6 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	         e.printStackTrace(); 
 	      }finally {
 	         session.close(); 
-	      }
-		
+	      }		
 	}
-
-
-
 }

@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
@@ -35,4 +37,8 @@ public class ServicioLogImpl implements ServicioLog{
 		logDao.guardarLog(log);
 	}
 
+	@Override
+	public List<Log> getLogByUsuario(Long idUsuario) {
+		return logDao.getLogByUsuario(idUsuario);
+	}
 }

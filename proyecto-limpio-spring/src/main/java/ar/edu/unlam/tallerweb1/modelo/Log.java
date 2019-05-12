@@ -23,7 +23,7 @@ public class Log {
 	
 	private String descripcion;
 	
-	private Date fechaModificacionDeNota;
+	private Date fechaModificacion;
 	
 	public Log(){}
 
@@ -31,7 +31,7 @@ public class Log {
 		this.usuario = usuario;
 		this.funcionalidad = funcionalidad;
 		this.descripcion = descripcion;
-		this.fechaModificacionDeNota = fechaModificacionDeNota;
+		this.fechaModificacion = fechaModificacion;
 	}
 
 	public Long getId() {
@@ -66,12 +66,12 @@ public class Log {
 		this.descripcion = descripcion;
 	}
 
-	public Date getFechaModificacionDeNota() {
-		return fechaModificacionDeNota;
+	public Date getFechaModificacion() {
+		return fechaModificacion;
 	}
 
-	public void setFechaModificacionDeNota(Date fechaModificacionDeNota) {
-		this.fechaModificacionDeNota = fechaModificacionDeNota;
+	public void setFechaModificacionDeNota(Date fechaModificacion) {
+		this.fechaModificacion = fechaModificacion;
 	}
 	
 	

@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.edu.unlam.tallerweb1.modelo.Log;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
+import ar.edu.unlam.tallerweb1.servicios.ServicioLog;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
 import ar.edu.unlam.tallerweb1.servicios.ServicioNota;
 import ar.edu.unlam.tallerweb1.servicios.ServicioUsuario;
@@ -28,6 +30,9 @@ public class ControladorUsuario {
 	@Inject
 	private ServicioNota servicioNota;
 	
+	@Inject
+	private ServicioLog servicioLog;
+	
 	@RequestMapping(path="/usuario")
 	public ModelAndView irAusuario(){
 		return new ModelAndView("usuario");
@@ -35,6 +40,10 @@ public class ControladorUsuario {
 	
 	@RequestMapping(path="/usuario-historial")
 	public ModelAndView irAusuarioHistorial(){
+		ModelMap modelo = new ModelMap();
+		List<Log> logUsuario = servicioLog.getLogByUsuario((long)2);
+		modelo.put("logsUsuario", logUsuario);
+		
 		return new ModelAndView("usuario-historial");
 	}
 
