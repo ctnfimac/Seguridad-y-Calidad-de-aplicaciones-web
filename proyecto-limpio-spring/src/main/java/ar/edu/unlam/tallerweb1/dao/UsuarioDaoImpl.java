@@ -1,7 +1,9 @@
 package ar.edu.unlam.tallerweb1.dao;
 
-import ar.edu.unlam.tallerweb1.modelo.Funcionalidad;
-import ar.edu.unlam.tallerweb1.modelo.Usuario;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -10,9 +12,8 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-import javax.inject.Inject;
+import ar.edu.unlam.tallerweb1.modelo.Funcionalidad;
+import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
 @Repository("usuarioDao")
 public class UsuarioDaoImpl implements UsuarioDao {
@@ -56,9 +57,18 @@ public class UsuarioDaoImpl implements UsuarioDao {
 			
 			Usuario usuario1 = new Usuario("admin@admin.com", "admin", "admin");
 			Usuario usuario2 = new Usuario("ignacio@user.com", "123456", "user");
+			Usuario usuario3 = new Usuario("user@user.com", "123", "user");
+			usuario1.setNombre("admin");
+			usuario2.setNombre("ignacio");
+			usuario3.setNombre("user");
+			usuario3.setHabilitado(false);
+			usuario1.setFechaAltaDeUsuario(new Date());
+			usuario2.setFechaAltaDeUsuario(new Date());
+			usuario3.setFechaAltaDeUsuario(new Date());
 			
 			session.save(usuario1);
 			session.save(usuario2);
+			session.save(usuario3);
 			session.save(login);
 			session.save(logout);		
 			session.save(registro);
@@ -83,7 +93,9 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	public List<Usuario> obtenerUsuarios() {
 		final Session session = sessionFactory.getCurrentSession();
 		List<Usuario> usuarios = null;
-		usuarios = session.createCriteria(Usuario.class).list();
+		usuarios = session.createCriteria(Usuario.class)
+				.add(Restrictions.eq("rol","user"))
+				.list();
 		return usuarios;
 	}
 

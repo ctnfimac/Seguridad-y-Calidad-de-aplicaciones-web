@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +24,10 @@ public class ContoladorAdmin {
 	
 	@RequestMapping(path="/admin")
 	public ModelAndView admin(){
-		return new ModelAndView("admin");
+		ModelMap modelo = new ModelMap();
+		List<Usuario> usuarios = servicioAdmin.listarUsuarios();
+		modelo.put("usuarios", usuarios);
+		return new ModelAndView("admin",modelo);
 	}
 	
 	@RequestMapping(path="/admin-historial", method= RequestMethod.GET)
@@ -35,16 +39,12 @@ public class ContoladorAdmin {
 		return new ModelAndView("admin-historial", modelo);
 	}
 	
-	@RequestMapping(path = "/cambiarEstadoUsuario", method = RequestMethod.POST)
-	public ModelAndView cambiarEstadoUsuario(Long idUsuario, Boolean estado, HttpServletRequest request) {
+	@RequestMapping(path = "/cambiarEstadoUsuario", method = RequestMethod.GET)
+	public ModelAndView cambiarEstadoUsuario(@RequestParam(value="idUsuario") Long idUsuario,@RequestParam(value="estado") Boolean estado, HttpServletRequest request) {
 		ModelMap model = new ModelMap();
-		
 		servicioAdmin.cambiarEstadoUsuario(idUsuario, estado);
-		
 		List<Usuario> usuarios = servicioAdmin.listarUsuarios();
-
-		model.put("usuarios", usuarios);
-		
+		model.put("usuarios", usuarios);	
 		return new ModelAndView("admin", model);
 	}
 }

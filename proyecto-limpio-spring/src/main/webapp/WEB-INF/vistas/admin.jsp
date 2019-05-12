@@ -1,3 +1,7 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -49,27 +53,34 @@
 							  <tr>
 							  	<th class="align-middle">Id</th>
 								<th class="align-middle">Nombre</th>
+								<th class="align-middle">Email</th>
 								<th class="align-middle">Estado</th>
 								<th class="align-middle">Fecha</th>
-								<th class="align-middle">Texto</th>
 								<th class="align-middle">Operación</th>
 							  </tr>
 							</thead>
 							<tbody>
+							<c:forEach items = "${usuarios}"  var="usuario">
 							  <tr>
-								<td class="align-middle">01</td>
-								<td class="align-middle">Zeus</td>
-								<td class="align-middle">habilitado</td>
-								<td class="align-middle">07-05-2019</td>
-								<td class="align-middle"><p>kldalkdakdjklasjdlkasjdlasjd</p></td>
+								<td class="align-middle">${usuario.id}</td>
+								<td class="align-middle">${usuario.nombre}</td>
+								<td class="align-middle">${usuario.email}</td>
+							    <c:if test="${usuario.getHabilitado() == true}">
+									<td class="align-middle">habilitado</td>
+								</c:if>
+								<c:if test="${usuario.getHabilitado() == false}">
+									<td class="align-middle">deshabilitado</td>
+								</c:if>
+								<td class="align-middle">${usuario.fechaAltaDeUsuario}</td>
 								<td class="align-middle">
 									<div class="btn-group" role="group">
-										<a href="#" class="btn text-white btn-danger">Habilitar</a>
-										<a href="#" class="btn text-white btn-primary">Deshabilitar</a>
+										<a href="cambiarEstadoUsuario?idUsuario=${usuario.id}&estado=true" class="btn text-white btn-danger">Habilitar</a>
+										<a href="cambiarEstadoUsuario?idUsuario=${usuario.id}&estado=false" class="btn text-white btn-primary">Deshabilitar</a>
 										<a href="#" class="btn text-white btn-warning">ver Historial</a>
 									</div>
 								</td>
 							  </tr> 
+							  </c:forEach>
 							</tbody>
 						  </table>
 						</div>
