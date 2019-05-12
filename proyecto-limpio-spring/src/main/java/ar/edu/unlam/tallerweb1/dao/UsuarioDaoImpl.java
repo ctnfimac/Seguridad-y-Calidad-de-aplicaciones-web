@@ -51,7 +51,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 		Funcionalidad verActividadPersonal = new Funcionalidad("Ver Historial de actividad");
 		Funcionalidad verActividadUsuarios = new Funcionalidad("Ver Historial de usuarios");
 		
-		Usuario usuario1 = new Usuario("admin@admin.com", "admin", "user");
+		Usuario usuario1 = new Usuario("admin@admin.com", "admin", "admin");
 		Usuario usuario2 = new Usuario("ignacio@user.com", "123456", "user");
 		
 		session.save(usuario1);

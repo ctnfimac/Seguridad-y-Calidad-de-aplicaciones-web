@@ -43,7 +43,7 @@ public class ServicioLoginImpl implements ServicioLogin {
 		servicioUsuarioDao.registrarUsuario(usuario);
 		
 		String mensajeLog;
-		mensajeLog = String.format("\"El usuario %u se registro en la aplicacion. ", usuario.getId());
+		mensajeLog = String.format("\"El usuario %s se registro en la aplicacion. ", Long.toString(usuario.getId()));
 		
 		servicioLog.guardarLog(usuario.getId(), "Regristro de usuario", mensajeLog );
 	}
@@ -57,7 +57,7 @@ public class ServicioLoginImpl implements ServicioLogin {
 	public void saveLogIngreso(Long idUsuario) {
 		
 		String mensajeLog;
-		mensajeLog = String.format("\"El usuario %u se logeo en la aplicacion. ", idUsuario);
+		mensajeLog = String.format("El usuario %s se logeo en la aplicacion. ", Long.toString(idUsuario));
 		
 		servicioLog.guardarLog(idUsuario, "Login", mensajeLog );	
 	}

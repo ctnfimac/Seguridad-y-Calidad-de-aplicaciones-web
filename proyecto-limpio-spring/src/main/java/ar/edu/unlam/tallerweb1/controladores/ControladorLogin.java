@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.unlam.tallerweb1.modelo.Funcionalidad;
-import ar.edu.unlam.tallerweb1.modelo.Log;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
-import ar.edu.unlam.tallerweb1.servicios.ServicioLog;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
 
 @Controller
@@ -25,6 +22,10 @@ public class ControladorLogin {
 	@Inject
 	private ServicioLogin servicioLogin;
 	
+	/*
+	@Inject
+	private ServicioCache cacheManager;
+	*/
 	// Este metodo escucha la URL localhost:8080/NOMBRE_APP/login si la misma es invocada por metodo http GET
 	@RequestMapping("/login")
 	public ModelAndView irALogin() {
@@ -47,6 +48,11 @@ public class ControladorLogin {
 		Usuario usuarioBuscado = servicioLogin.consultarUsuario(usuario);
 		if (usuarioBuscado != null) {
 			request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
+			
+			/*
+			cacheManager.getInstance();
+			cacheManager.put("loggedUser", usuarioBuscado.getId());
+			*/
 			
 			servicioLogin.saveLogIngreso(usuarioBuscado.getId());
 			

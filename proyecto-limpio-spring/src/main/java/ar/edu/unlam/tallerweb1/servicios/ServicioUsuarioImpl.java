@@ -30,7 +30,7 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 		String funcionalidad = "Cambio de contraseña";
 		
 		String mensajeLog;
-		mensajeLog = String.format("\"El usuario %u cambio su contrasenia. ", idUsuario);
+		mensajeLog = String.format("\"El usuario %s cambio su contrasenia. ", Long.toString(idUsuario));
 
 		servicioLog.guardarLog(idUsuario, funcionalidad, mensajeLog);
 	}
@@ -49,7 +49,7 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 			String funcionalidad = "Recupero de contraseña";
 			
 			String mensajeLog;
-			mensajeLog = String.format("\"El usuario %u recuperó su contrasenia. ", idUsuario);
+			mensajeLog = String.format("\"El usuario %s recuperó su contrasenia. ", Long.toString(idUsuario));
 
 			servicioLog.guardarLog(idUsuario, funcionalidad, mensajeLog);
 			

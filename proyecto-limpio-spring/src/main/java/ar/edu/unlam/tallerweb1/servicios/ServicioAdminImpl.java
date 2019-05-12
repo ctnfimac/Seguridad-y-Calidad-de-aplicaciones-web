@@ -41,7 +41,7 @@ public class ServicioAdminImpl implements ServicioAdmin{
 			funcionalidad = "Usuario Deshablitado";
 		
 		String mensajeLog;
-		mensajeLog = String.format("\"El usuario %u fue %e. ", idUsuario, estado);
+		mensajeLog = String.format("\"El usuario %s fue %s. ", Long.toString(idUsuario), estado);
 		
 		// esta mal hay que mandar el id de usuario logeado 
 		servicioLog.guardarLog(idUsuario, funcionalidad, mensajeLog);

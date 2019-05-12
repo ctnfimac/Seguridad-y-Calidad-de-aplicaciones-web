@@ -42,7 +42,7 @@ public class ServicioNotaImpl implements ServicioNota{
 		String funcionalidad = "Ingreso texto nuevo";
 		
 		String mensajeLog;
-		mensajeLog = String.format("\"El usuario %u ingreso una nueva nota. ", idUsuario);
+		mensajeLog = String.format("\"El usuario %s ingreso una nueva nota. ", Long.toString(idUsuario));
 
 		servicioLog.guardarLog(idUsuario, funcionalidad, mensajeLog);
 		
