@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Usuario</title>
+	<title>Usuario - Historial</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
@@ -49,21 +49,23 @@
 					<!-- DataTables Example -->
 					<div class="card">
 					  <div class="card-header">
-						Mis Notas <a href="#" class="btn btn-success float-right" data-toggle="modal" data-target="#modalAgregarNota">Agregar Nota</a>
+						Historial de mi cuenta
 					  </div>
 					  <div class="card-body pt-0">
 						<div class="table-responsive">
 						  <table class="table text-center" id="dataTable" width="100%" cellspacing="0">
 							<thead>
 							  <tr>
-							  	<th class="align-middle">Fecha</th>
-								<th class="align-middle">Nota</th>
+							  	<th class="align-middle">Funcionalidad</th>
+								<th class="align-middle">Fecha y Hora</th>
+								<th class="align-middle">Descripción</th><!-- creo que la descripcion cumple el mismo rol que la funcionalidad -->
 							  </tr>
 							</thead>
 							<tbody>
 							  <tr>
-								<td class="align-middle">07-05-2019</td>
-								<td class="align-middle">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec urna erat, dictum id elit vitae, rutrum dignissim massa. Etiam gravida mauris sed nunc cursus suscipit. Aliquam erat volutpat.</td>
+								<td class="align-middle">Agregar Nota</td>
+								<td class="align-middle">12-05-2019 2:36</td>
+								<th class="align-middle">Agregaste una nota</th> 
 							  </tr> 
 							</tbody>
 						  </table>
@@ -77,30 +79,6 @@
 			  </div>
 			  <!-- /#wrapper -->
 			  
-	<!-- Modal -->
-		<div class="modal fade" id="modalAgregarNota" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content pb-3">
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">Escriba su nota</h5>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-		      </div>
-		      <div class="modal-body pb-3">
-		        <form action="registrar-usuario" class="text-center px-5" method="POST" modelAttribute="usuario">
-					<div class="form-group">
-					    <textarea class="form-control" id="nota" rows="3"></textarea>
-					</div>
-					<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Agregar</button>
-				</form>
-		      </div>
-		    </div>
-		  </div>
-		</div>
-	<!-- Fin Modal --> 
-	
-	
 	<!-- Modal Cambiar Contraseña-->
 	<div class="modal fade" id="modalCambiarContrasenia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
@@ -122,7 +100,7 @@
 	    </div>
 	  </div>
 	</div>
-	<!-- Fin Modal Cambiar Contraseña-->  
+	<!-- Fin Modal Cambiar Contraseña-->  		 
 	<script src="js/jquery-3.3.1.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 </body>

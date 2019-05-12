@@ -7,11 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.edu.unlam.tallerweb1.modelo.Log;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import ar.edu.unlam.tallerweb1.servicios.ServicioAdmin;
 @Controller
@@ -23,6 +24,15 @@ public class ContoladorAdmin {
 	@RequestMapping(path="/admin")
 	public ModelAndView admin(){
 		return new ModelAndView("admin");
+	}
+	
+	@RequestMapping(path="/admin-historial", method= RequestMethod.GET)
+	public ModelAndView adminHistorial(@RequestParam Long id){
+		ModelMap modelo = new ModelMap();
+		List<Log> historial = null;
+		//aca busco todos el historial de un usuario por id
+		modelo.put("historial", historial);
+		return new ModelAndView("admin-historial", modelo);
 	}
 	
 	@RequestMapping(path = "/cambiarEstadoUsuario", method = RequestMethod.POST)

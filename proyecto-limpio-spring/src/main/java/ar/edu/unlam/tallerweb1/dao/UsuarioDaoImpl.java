@@ -16,7 +16,9 @@ import javax.inject.Inject;
 
 @Repository("usuarioDao")
 public class UsuarioDaoImpl implements UsuarioDao {
-
+	
+	static Boolean datosCargados = false; // flag para cargar los datos una sola vez
+	
 	// Como todo dao maneja acciones de persistencia, normalmente estarÃ¡ inyectado el session factory de hibernate
 	// el mismo estÃ¡ difinido en el archivo hibernateContext.xml
 	@Inject
@@ -37,37 +39,38 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
 	@Override
 	public void cargarDatos() {
-		final Session session = sessionFactory.getCurrentSession();
-		
-		Funcionalidad login = new Funcionalidad("Login");
-		Funcionalidad logout = new Funcionalidad("Logout");
-		Funcionalidad registro = new Funcionalidad("Regristro de usuario");
-		Funcionalidad resetPassword = new Funcionalidad("Cambio de contraseña");
-		Funcionalidad recuperarContraseña = new Funcionalidad("Recupero de contraseña");
-		Funcionalidad ingresartexto = new Funcionalidad("Ingreso texto nuevo");
-		Funcionalidad modificacionTexto = new Funcionalidad("Modificacion de texto");
-		Funcionalidad habilitarUsuario = new Funcionalidad("Usuario Habilitado");
-		Funcionalidad rechazarUsuario = new Funcionalidad("Usuario Deshablitado");
-		Funcionalidad verActividadPersonal = new Funcionalidad("Ver Historial de actividad");
-		Funcionalidad verActividadUsuarios = new Funcionalidad("Ver Historial de usuarios");
-		
-		Usuario usuario1 = new Usuario("admin@admin.com", "admin", "admin");
-		Usuario usuario2 = new Usuario("ignacio@user.com", "123456", "user");
-		
-		session.save(usuario1);
-		session.save(usuario2);
-		session.save(login);
-		session.save(logout);		
-		session.save(registro);
-		session.save(resetPassword);
-		session.save(recuperarContraseña);
-		session.save(ingresartexto);
-		session.save(modificacionTexto);
-		session.save(habilitarUsuario);
-		session.save(rechazarUsuario);
-		session.save(verActividadPersonal);
-		session.save(verActividadUsuarios);
-
+		if(!this.datosCargados){
+			final Session session = sessionFactory.getCurrentSession();
+			this.datosCargados = true;
+			Funcionalidad login = new Funcionalidad("Login");
+			Funcionalidad logout = new Funcionalidad("Logout");
+			Funcionalidad registro = new Funcionalidad("Regristro de usuario");
+			Funcionalidad resetPassword = new Funcionalidad("Cambio de contraseña");
+			Funcionalidad recuperarContraseña = new Funcionalidad("Recupero de contraseña");
+			Funcionalidad ingresartexto = new Funcionalidad("Ingreso texto nuevo");
+			Funcionalidad modificacionTexto = new Funcionalidad("Modificacion de texto");
+			Funcionalidad habilitarUsuario = new Funcionalidad("Usuario Habilitado");
+			Funcionalidad rechazarUsuario = new Funcionalidad("Usuario Deshablitado");
+			Funcionalidad verActividadPersonal = new Funcionalidad("Ver Historial de actividad");
+			Funcionalidad verActividadUsuarios = new Funcionalidad("Ver Historial de usuarios");
+			
+			Usuario usuario1 = new Usuario("admin@admin.com", "admin", "admin");
+			Usuario usuario2 = new Usuario("ignacio@user.com", "123456", "user");
+			
+			session.save(usuario1);
+			session.save(usuario2);
+			session.save(login);
+			session.save(logout);		
+			session.save(registro);
+			session.save(resetPassword);
+			session.save(recuperarContraseña);
+			session.save(ingresartexto);
+			session.save(modificacionTexto);
+			session.save(habilitarUsuario);
+			session.save(rechazarUsuario);
+			session.save(verActividadPersonal);
+			session.save(verActividadUsuarios);
+		}
 	}
 
 	@Override

@@ -33,6 +33,11 @@ public class ControladorUsuario {
 		return new ModelAndView("usuario");
 	}
 	
+	@RequestMapping(path="/usuario-historial")
+	public ModelAndView irAusuarioHistorial(){
+		return new ModelAndView("usuario-historial");
+	}
+
 	@RequestMapping(path="/registrar-usuario", method = RequestMethod.POST)
 	public ModelAndView registrarUsuario(@ModelAttribute("usuario") Usuario usuarioNuevo){
 		ModelMap modelo = new ModelMap();

@@ -39,41 +39,31 @@
 				  <div class="container-fluid white">
 					<!-- DataTables Example -->
 					<div class="card">
-					  <div class="card-header ">
-						Tabla de clientes
+					  	<div class="card">
+					  <div class="card-header">
+						Historial de la cuenta de nombreUsuario
 					  </div>
-					  <div class="card-body white pt-0">
+					  <div class="card-body pt-0">
 						<div class="table-responsive">
 						  <table class="table text-center" id="dataTable" width="100%" cellspacing="0">
 							<thead>
 							  <tr>
-							  	<th class="align-middle">Id</th>
-								<th class="align-middle">Nombre</th>
-								<th class="align-middle">Estado</th>
-								<th class="align-middle">Fecha</th>
-								<th class="align-middle">Texto</th>
-								<th class="align-middle">Operación</th>
+							  	<th class="align-middle">Funcionalidad</th>
+								<th class="align-middle">Fecha y Hora</th>
+								<th class="align-middle">Descripción</th><!-- creo que la descripcion cumple el mismo rol que la funcionalidad -->
 							  </tr>
 							</thead>
 							<tbody>
 							  <tr>
-								<td class="align-middle">01</td>
-								<td class="align-middle">Zeus</td>
-								<td class="align-middle">habilitado</td>
-								<td class="align-middle">07-05-2019</td>
-								<td class="align-middle"><p>kldalkdakdjklasjdlkasjdlasjd</p></td>
-								<td class="align-middle">
-									<div class="btn-group" role="group">
-										<a href="#" class="btn text-white btn-danger">Habilitar</a>
-										<a href="#" class="btn text-white btn-primary">Deshabilitar</a>
-										<a href="#" class="btn text-white btn-warning">ver Historial</a>
-									</div>
-								</td>
+								<td class="align-middle">Agregar Nota</td>
+								<td class="align-middle">12-05-2019 2:36</td>
+								<th class="align-middle">Agregaste una nota</th> 
 							  </tr> 
 							</tbody>
 						  </table>
 						</div>
 					  </div>
+					</div>
 					</div>
 				  </div>
 				  <!-- /.container-fluid --> 

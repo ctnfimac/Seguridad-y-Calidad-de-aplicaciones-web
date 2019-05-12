@@ -19,7 +19,7 @@
 							<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Login</button>
 						</form:form>
 						<p class="text-center mt-4" data-toggle="modal" data-target="#exampleModal">¿No tenés una cuenta?<a href="#"> Registrarse</a></p>
-						<p class="text-center"><a href="#">¿Olvidaste tu contraseña?</a></p>
+						<p class="text-center"><a href="#" data-toggle="modal" data-target="#modalRecuperarContrasenia">¿Olvidaste tu contraseña?</a></p>
 						<c:if test="${not empty error}">
 					        <div class="alert alert-dismissible alert-danger text-center py-2">
 							  ${error}!
@@ -76,6 +76,28 @@
 		    </div>
 		  </div>
 		</div>
+		
+	<!-- Modal Recuperar Contraseña-->
+	<div class="modal fade" id="modalRecuperarContrasenia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content pb-3">
+	      <div class="modal-header">
+	        <h6 class="modal-title" id="exampleModalLabel">Escriba su dirección de email para recuperar su contraseña</h6>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body pb-3">
+	        <form action="" class="text-center px-5" method="POST" modelAttribute="">
+	        	<input value="" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña -->
+				<input class="form-control mb-4" id="email" type="email" placeholder="Email"/>
+				<button class="btn btn-lg btn-warning btn-block text-white" Type="Submit"/>Recuperar Contraseña</button>
+			</form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<!-- Fin Modal Recuperar Contraseña--> 
 		
 		<!-- Placed at the end of the document so the pages load faster -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" ></script>
