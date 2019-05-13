@@ -40,14 +40,20 @@ public class ControladorUsuario {
 	@RequestMapping(path="/usuario")
 	public ModelAndView irAusuario(HttpServletRequest request){
 		HttpSession misession= (HttpSession) request.getSession();
-		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
-			ModelMap modelo = new ModelMap();
-			Nota nota = new Nota();
-			modelo.put("nota", nota);
-			List<Nota> notasUsuario = servicioNota.getByUsuario((long)2);
-			modelo.put("notas", notasUsuario);
-			modelo.put("nombre",misession.getAttribute("sessionNombre"));
-			return new ModelAndView("usuario", modelo);
+		if(misession.getAttribute("sessionId") != null) {
+			if(servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))){
+				ModelMap modelo = new ModelMap();
+				Nota nota = new Nota();
+				modelo.put("nota", nota);
+				List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
+				modelo.put("notas", notasUsuario);
+				modelo.put("nombre",misession.getAttribute("sessionNombre"));
+				modelo.put("id", (long) misession.getAttribute("sessionId"));
+				modelo.put("usuario", new Usuario());
+				return new ModelAndView("usuario", modelo);
+			}else{
+				return new ModelAndView("redirect:cerrarSession");
+			}	
 		}else{
 			return new ModelAndView("redirect:login");
 		}
@@ -56,11 +62,18 @@ public class ControladorUsuario {
 	@RequestMapping(path="/usuario-historial")
 	public ModelAndView irAusuarioHistorial(HttpServletRequest request){
 		HttpSession misession= (HttpSession) request.getSession();
-		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
-			ModelMap modelo = new ModelMap();
-			List<Log> logUsuario = servicioLog.getLogByUsuario((long)2);
-			modelo.put("logsUsuario", logUsuario);
-			return new ModelAndView("usuario-historial");
+		if(misession.getAttribute("sessionId") != null) {
+			if(servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))){
+				ModelMap modelo = new ModelMap();
+				List<Log> logUsuario = servicioLog.getLogByUsuario((long) misession.getAttribute("sessionId"));
+				modelo.put("logsUsuario", logUsuario);
+				modelo.put("id", (long) misession.getAttribute("sessionId"));
+				modelo.put("usuario", new Usuario());
+				modelo.put("nombre",misession.getAttribute("sessionNombre"));
+				return new ModelAndView("usuario-historial",modelo);
+			}else{
+				return new ModelAndView("redirect:cerrarSession");
+			}
 		}else{
 			return new ModelAndView("redirect:login");
 		}
@@ -103,7 +116,7 @@ public class ControladorUsuario {
 			ModelMap modelo = new ModelMap();
 			try{
 				if(!nuevaNota.getDescripcion().isEmpty()){
-					servicioNota.nuevaNota((long)2, nuevaNota.getDescripcion());
+					servicioNota.nuevaNota((long) misession.getAttribute("sessionId"), nuevaNota.getDescripcion());
 					modelo.put("errorRegistro", 0);
 					modelo.put("msjregistro", "se registro exitosamente");
 				}else{
@@ -119,25 +132,35 @@ public class ControladorUsuario {
 			Nota nota = new Nota();
 			modelo.put("nota", nota);
 	
-			List<Nota> notasUsuario = servicioNota.getByUsuario((long)2);
+			List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
 			modelo.put("notas", notasUsuario);
-			
+			modelo.put("id", (long) misession.getAttribute("sessionId"));
+			modelo.put("usuario", new Usuario());
+			modelo.put("nombre",misession.getAttribute("sessionNombre"));
 			return new ModelAndView("usuario", modelo);
 		}else{
 			return new ModelAndView("redirect:login");
 		}
 	}
 	
-	@RequestMapping(path="/cambiar-contraseña", method = RequestMethod.POST)
-	public ModelAndView cambiarContraseña(Long idUsuario, String contraseniaAnt, String contraseniaNueva,HttpServletRequest request){
+	@RequestMapping(path="/cambiar-contrasenia", method = RequestMethod.POST)
+	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuario/*Long idUsuario, String contraseniaAnt, String contraseniaNueva*/,HttpServletRequest request){
+//		ModelMap modelo = new ModelMap();
+//		modelo.put("nota", new Nota());
+//		System.out.println("password: " + usuario.getPassword());
+//		System.out.println("password2: " + usuario.getPassword2());
+		//return new ModelAndView("usuario",modelo);
 		HttpSession misession= (HttpSession) request.getSession();
 		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
 			ModelMap modelo = new ModelMap();
+			String contraseniaAnt = usuario.getPassword();
+			String contraseniaNueva = usuario.getPassword2();
 			try{
 				if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
-						
-					if(contraseniaAnt != contraseniaNueva){
-							servicioUsuario.cambiarContrasenia(idUsuario, contraseniaNueva );
+					System.out.println("1contraseniaNueva: " + contraseniaNueva);
+					System.out.println("1id: " + usuario.getId());	
+					if(contraseniaAnt.equals(contraseniaNueva)){
+							servicioUsuario.cambiarContrasenia(usuario.getId(), contraseniaNueva );
 						}
 						else{
 							modelo.put("errorCambio", 1);
@@ -152,6 +175,10 @@ public class ControladorUsuario {
 				modelo.put("errorCambio", 1);
 				modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
 			}
+			List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
+			modelo.put("notas", notasUsuario);
+			modelo.put("nombre",misession.getAttribute("sessionNombre"));
+			modelo.put("nota", new Nota());
 			return new ModelAndView("usuario",modelo);
 		}else{
 			return new ModelAndView("redirect:login");

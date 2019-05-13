@@ -19,7 +19,8 @@
 						<i class="fas fa-user-circle fa-fw"></i>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-						<a class="dropdown-item" href="#">Cerrar Sesión</a>
+						<a class="dropdown-item" href="login">Inicio</a>
+						<a class="dropdown-item" href="cerrarSession">Cerrar Sesión</a>
 					</div>
 				</li>
 			</ul>
@@ -32,6 +33,11 @@
 					<a class="nav-link text-white" href="admin">
 					  <i class="fas fa-fw fa-table"></i>
 					  <span>Usuarios</span></a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link text-white" href="historial-logs">
+					  <i class="fas fa-fw fa-table"></i>
+					  <span>Logs</span></a>
 				  </li>
 				</ul>
 		  

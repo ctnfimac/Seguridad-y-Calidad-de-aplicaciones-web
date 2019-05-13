@@ -118,12 +118,12 @@
 	        </button>
 	      </div>
 	      <div class="modal-body pb-3">
-	        <form action="" class="text-center px-5" method="POST" modelAttribute="usuario">
-	        	<input value="" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña -->
-				<input class="form-control mb-4" id="password" type="password" placeholder="Contraseña Nueva"/>
-				<input class="form-control mb-4" id="password2" type="password" placeholder="Repetir nueva Contraseña"/>
-				<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Cambiar Contraseña</button>
-			</form>
+	        <form:form action="cambiar-contrasenia" class="text-center px-5" method="POST" modelAttribute="usuario">
+	        	<form:input path="id" value="${id}" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña -->
+				<form:input path="password" class="form-control mb-4" id="password" type="password" placeholder="Contraseña Nueva"/>
+				<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Repetir nueva Contraseña"/>
+				<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña">
+			</form:form>
 	      </div>
 	    </div>
 	  </div>

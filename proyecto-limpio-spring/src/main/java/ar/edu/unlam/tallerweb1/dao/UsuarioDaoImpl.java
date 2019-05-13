@@ -114,20 +114,20 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	public void cambiarContrasenia(Long idUsuario, String contrasenia) {
 		
 		final Session session = sessionFactory.getCurrentSession();
-		Transaction tx = null;
+//		Transaction tx = null;
 		
-	      try{
-	         tx = session.beginTransaction();
+//	      try{
+//	         tx = session.beginTransaction();
 	         Usuario user = (Usuario)session.get(Usuario.class, idUsuario); 
 	         user.setPassword(contrasenia);
 	         session.update(user); 
-	         tx.commit();
-	      }catch (HibernateException e) {
-	         if (tx!=null) tx.rollback();
-	         e.printStackTrace(); 
-	      }finally {
-	         session.close(); 
-	      }		
+//	         tx.commit();
+//	      }catch (HibernateException e) {
+//	         if (tx!=null) tx.rollback();
+//	         e.printStackTrace(); 
+//	      }finally {
+//	         session.close(); 
+//	      }		
 	}
 
 	@Override

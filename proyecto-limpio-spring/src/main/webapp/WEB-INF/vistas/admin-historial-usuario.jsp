@@ -19,7 +19,8 @@
 						<i class="fas fa-user-circle fa-fw"></i>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-						<a class="dropdown-item" href="#">Cerrar Sesión</a>
+						<a class="dropdown-item" href="login">Inicio</a>
+						<a class="dropdown-item" href="cerrarSession">Cerrar Sesión</a>
 					</div>
 				</li>
 			</ul>

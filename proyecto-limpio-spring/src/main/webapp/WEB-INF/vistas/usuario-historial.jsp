@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html lang="es">
 <head>
 	<meta charset="utf-8" />
@@ -60,8 +61,8 @@
 							<thead>
 							  <tr>
 							  	<th class="align-middle">Funcionalidad</th>
-								<th class="align-middle">Descripción</th><!-- creo que la descripcion cumple el mismo rol que la funcionalidad -->
 								<th class="align-middle">Fecha y Hora</th>
+								<th class="align-middle">Descripción</th><!-- creo que la descripcion cumple el mismo rol que la funcionalidad -->
 							  </tr>
 							</thead>
 							<tbody>
@@ -95,17 +96,17 @@
 	        </button>
 	      </div>
 	      <div class="modal-body pb-3">
-	        <form action="" class="text-center px-5" method="POST" modelAttribute="usuario">
-	        	<input value="" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña -->
-				<input class="form-control mb-4" id="password" type="password" placeholder="Contraseña Nueva"/>
-				<input class="form-control mb-4" id="password2" type="password" placeholder="Repetir nueva Contraseña"/>
-				<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Cambiar Contraseña</button>
-			</form>
+	        <form:form action="cambiar-contrasenia" class="text-center px-5" method="POST" modelAttribute="usuario">
+	        	<form:input path="id" value="${id}" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña -->
+				<form:input path="password" class="form-control mb-4" id="password" type="password" placeholder="Contraseña Nueva"/>
+				<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Repetir nueva Contraseña"/>
+				<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña">
+			</form:form>
 	      </div>
 	    </div>
 	  </div>
 	</div>
-	<!-- Fin Modal Cambiar Contraseña-->  		 
+	<!-- Fin Modal Cambiar Contraseña-->   		 
 	<script src="js/jquery-3.3.1.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 </body>
