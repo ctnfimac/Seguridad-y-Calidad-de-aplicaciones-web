@@ -97,6 +97,9 @@ public class ControladorLogin {
 	@RequestMapping(path = "/cerrarSession", method = RequestMethod.GET)
 	public ModelAndView irACerrarSesision(HttpServletRequest request) {
 		HttpSession misession= (HttpSession) request.getSession();
+		
+		servicioLogin.cerrarLogSession((Long)misession.getAttribute("sessionId"));
+		
 		misession.removeAttribute("sessionId");
 		misession.removeAttribute("sessionNombre");
 		misession.removeAttribute("ROL");

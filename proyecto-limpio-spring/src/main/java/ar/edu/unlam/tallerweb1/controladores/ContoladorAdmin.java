@@ -42,7 +42,7 @@ public class ContoladorAdmin {
 			ModelMap modelo = new ModelMap();
 			List<Log> historial = servicioAdmin.getLogsByIdUsuario(id);
 			modelo.put("historial", historial);
-			return new ModelAndView("admin-historial-usuario");
+			return new ModelAndView("admin-historial-usuario",modelo);
 		}else{
 			return new ModelAndView("redirect:login");
 		}

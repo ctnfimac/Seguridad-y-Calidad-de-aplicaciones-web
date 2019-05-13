@@ -28,6 +28,7 @@ public class LogDaoImpl implements LogDao {
 	public List<Log> getLogByUsuario(Long idUsuario) {
 		final Session session = sessionFactory.getCurrentSession();
 		return  session.createCriteria(Log.class)
+				.add(Restrictions.eq("idUsuario",idUsuario))
 				.list();
 	}
 

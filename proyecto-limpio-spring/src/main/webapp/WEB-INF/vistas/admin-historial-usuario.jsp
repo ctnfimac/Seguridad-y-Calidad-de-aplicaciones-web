@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -32,7 +34,12 @@
 				  <li class="nav-item">
 					<a class="nav-link text-white" href="admin">
 					  <i class="fas fa-fw fa-table"></i>
-					  <span>Volver</span></a>
+					  <span>Usuarios</span></a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link text-white" href="historial-logs">
+					  <i class="fas fa-fw fa-table"></i>
+					  <span>Logs</span></a>
 				  </li>
 				</ul>
 		  
@@ -49,6 +56,7 @@
 						  <table class="table text-center" id="dataTable" width="100%" cellspacing="0">
 							<thead>
 							  <tr>
+							    <th class="align-middle">Id del Usuario</th>
 							  	<th class="align-middle">Funcionalidad</th>
 								<th class="align-middle">Fecha y Hora</th>
 								<th class="align-middle">Descripcion</th>

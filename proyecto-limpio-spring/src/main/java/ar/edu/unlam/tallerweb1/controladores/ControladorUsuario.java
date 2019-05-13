@@ -144,12 +144,7 @@ public class ControladorUsuario {
 	}
 	
 	@RequestMapping(path="/cambiar-contrasenia", method = RequestMethod.POST)
-	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuario/*Long idUsuario, String contraseniaAnt, String contraseniaNueva*/,HttpServletRequest request){
-//		ModelMap modelo = new ModelMap();
-//		modelo.put("nota", new Nota());
-//		System.out.println("password: " + usuario.getPassword());
-//		System.out.println("password2: " + usuario.getPassword2());
-		//return new ModelAndView("usuario",modelo);
+	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuario,HttpServletRequest request){
 		HttpSession misession= (HttpSession) request.getSession();
 		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
 			ModelMap modelo = new ModelMap();
@@ -157,8 +152,6 @@ public class ControladorUsuario {
 			String contraseniaNueva = usuario.getPassword2();
 			try{
 				if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
-					System.out.println("1contraseniaNueva: " + contraseniaNueva);
-					System.out.println("1id: " + usuario.getId());	
 					if(contraseniaAnt.equals(contraseniaNueva)){
 							servicioUsuario.cambiarContrasenia(usuario.getId(), contraseniaNueva );
 						}

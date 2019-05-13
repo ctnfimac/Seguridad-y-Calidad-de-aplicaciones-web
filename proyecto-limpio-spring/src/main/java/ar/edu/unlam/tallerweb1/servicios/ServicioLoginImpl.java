@@ -62,4 +62,12 @@ public class ServicioLoginImpl implements ServicioLogin {
 		servicioLog.guardarLog(idUsuario, "Login", mensajeLog );	
 	}
 
+	@Override
+	public void cerrarLogSession(Long idUsuario) {
+		String mensajeLog;
+		mensajeLog = String.format("El usuario con id %s cerro sessión. ", Long.toString(idUsuario));
+		
+		servicioLog.guardarLog(idUsuario, "Logout", mensajeLog );
+	}
+
 }

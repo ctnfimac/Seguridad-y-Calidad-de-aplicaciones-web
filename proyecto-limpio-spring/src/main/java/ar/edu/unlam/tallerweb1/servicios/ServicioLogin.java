@@ -12,4 +12,5 @@ public interface ServicioLogin {
 	void registrarUsuario(Usuario usuario);
 	List<Usuario> obtenerUsuarios();
 	void saveLogIngreso(Long idUsuario);
+	void cerrarLogSession(Long idUsuario);
 }
