@@ -86,6 +86,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	@Override
 	public void registrarUsuario(Usuario usuario) {
 		final Session session = sessionFactory.getCurrentSession();
+		usuario.setFechaAltaDeUsuario(new Date());
 		session.save(usuario);
 	}
 
@@ -127,5 +128,17 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	      }finally {
 	         session.close(); 
 	      }		
+	}
+
+	@Override
+	public Boolean getHabilitado(Long id) {
+		final Session session = sessionFactory.getCurrentSession();
+		Usuario usuario = null;
+		usuario = (Usuario) session.createCriteria(Usuario.class)
+				.add(Restrictions.eq("id", id))
+				.uniqueResult();
+		Boolean resultado = false;
+		resultado = usuario.getHabilitado();
+		return resultado;
 	}
 }

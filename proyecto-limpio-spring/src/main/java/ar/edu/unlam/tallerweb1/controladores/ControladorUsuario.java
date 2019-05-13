@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -36,29 +38,36 @@ public class ControladorUsuario {
 	private ServicioLog servicioLog;
 	
 	@RequestMapping(path="/usuario")
-	public ModelAndView irAusuario(){
-		ModelMap modelo = new ModelMap();
-		
-		Nota nota = new Nota();
-		modelo.put("nota", nota);
-
-		List<Nota> notasUsuario = servicioNota.getByUsuario((long)2);
-		modelo.put("notas", notasUsuario);
-		
-		return new ModelAndView("usuario", modelo);
+	public ModelAndView irAusuario(HttpServletRequest request){
+		HttpSession misession= (HttpSession) request.getSession();
+		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
+			ModelMap modelo = new ModelMap();
+			Nota nota = new Nota();
+			modelo.put("nota", nota);
+			List<Nota> notasUsuario = servicioNota.getByUsuario((long)2);
+			modelo.put("notas", notasUsuario);
+			modelo.put("nombre",misession.getAttribute("sessionNombre"));
+			return new ModelAndView("usuario", modelo);
+		}else{
+			return new ModelAndView("redirect:login");
+		}
 	}
 	
 	@RequestMapping(path="/usuario-historial")
-	public ModelAndView irAusuarioHistorial(){
-		ModelMap modelo = new ModelMap();
-		List<Log> logUsuario = servicioLog.getLogByUsuario((long)2);
-		modelo.put("logsUsuario", logUsuario);
-		
-		return new ModelAndView("usuario-historial");
+	public ModelAndView irAusuarioHistorial(HttpServletRequest request){
+		HttpSession misession= (HttpSession) request.getSession();
+		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
+			ModelMap modelo = new ModelMap();
+			List<Log> logUsuario = servicioLog.getLogByUsuario((long)2);
+			modelo.put("logsUsuario", logUsuario);
+			return new ModelAndView("usuario-historial");
+		}else{
+			return new ModelAndView("redirect:login");
+		}
 	}
 
 	@RequestMapping(path="/registrar-usuario", method = RequestMethod.POST)
-	public ModelAndView registrarUsuario(@ModelAttribute("usuario") Usuario usuarioNuevo){
+	public ModelAndView registrarUsuario(@ModelAttribute("usuario") Usuario usuarioNuevo,HttpServletRequest request){
 		ModelMap modelo = new ModelMap();
 		try{
 			if(!usuarioNuevo.getEmail().isEmpty() && !usuarioNuevo.getNombre().isEmpty() 
@@ -88,57 +97,65 @@ public class ControladorUsuario {
 	}
 	
 	@RequestMapping(path="/registrar-nota", method = RequestMethod.POST)
-	public ModelAndView registrarNota(@ModelAttribute("nota") Nota nuevaNota){
-		ModelMap modelo = new ModelMap();
-		try{
-			if(!nuevaNota.getDescripcion().isEmpty()){
-				servicioNota.nuevaNota((long)2, nuevaNota.getDescripcion());
-				modelo.put("errorRegistro", 0);
-				modelo.put("msjregistro", "se registro exitosamente");
-			}else{
+	public ModelAndView registrarNota(@ModelAttribute("nota") Nota nuevaNota,HttpServletRequest request){
+		HttpSession misession= (HttpSession) request.getSession();
+		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
+			ModelMap modelo = new ModelMap();
+			try{
+				if(!nuevaNota.getDescripcion().isEmpty()){
+					servicioNota.nuevaNota((long)2, nuevaNota.getDescripcion());
+					modelo.put("errorRegistro", 0);
+					modelo.put("msjregistro", "se registro exitosamente");
+				}else{
+					modelo.put("errorRegistro", 1);
+					modelo.put("msjregistro", "complete todos los campos");
+				}
+			}catch(Exception e){
+				System.out.println(e.getMessage());
 				modelo.put("errorRegistro", 1);
-				modelo.put("msjregistro", "complete todos los campos");
+				modelo.put("msjregistro", "Hubo problemas para dar de alta su nota");
 			}
-		}catch(Exception e){
-			System.out.println(e.getMessage());
-			modelo.put("errorRegistro", 1);
-			modelo.put("msjregistro", "Hubo problemas para dar de alta su nota");
+			
+			Nota nota = new Nota();
+			modelo.put("nota", nota);
+	
+			List<Nota> notasUsuario = servicioNota.getByUsuario((long)2);
+			modelo.put("notas", notasUsuario);
+			
+			return new ModelAndView("usuario", modelo);
+		}else{
+			return new ModelAndView("redirect:login");
 		}
-		
-		Nota nota = new Nota();
-		modelo.put("nota", nota);
-
-		List<Nota> notasUsuario = servicioNota.getByUsuario((long)2);
-		modelo.put("notas", notasUsuario);
-		
-		return new ModelAndView("usuario", modelo);
 	}
 	
 	@RequestMapping(path="/cambiar-contraseña", method = RequestMethod.POST)
-	public ModelAndView cambiarContraseña(Long idUsuario, String contraseniaAnt, String contraseniaNueva){
-		ModelMap modelo = new ModelMap();
-		
-		try{
-			if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
-					
-				if(contraseniaAnt != contraseniaNueva){
-						servicioUsuario.cambiarContrasenia(idUsuario, contraseniaNueva );
-					}
-					else{
-						modelo.put("errorCambio", 1);
-						modelo.put("msjcambio", "las contraseñas son distintas");
-					}
-			}else{
+	public ModelAndView cambiarContraseña(Long idUsuario, String contraseniaAnt, String contraseniaNueva,HttpServletRequest request){
+		HttpSession misession= (HttpSession) request.getSession();
+		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
+			ModelMap modelo = new ModelMap();
+			try{
+				if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
+						
+					if(contraseniaAnt != contraseniaNueva){
+							servicioUsuario.cambiarContrasenia(idUsuario, contraseniaNueva );
+						}
+						else{
+							modelo.put("errorCambio", 1);
+							modelo.put("msjcambio", "las contraseñas son distintas");
+						}
+				}else{
+					modelo.put("errorCambio", 1);
+					modelo.put("msjcambio", "complete todos los campos");
+				}
+			}catch(Exception e){
+				System.out.println(e.getMessage());
 				modelo.put("errorCambio", 1);
-				modelo.put("msjcambio", "complete todos los campos");
+				modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
 			}
-		}catch(Exception e){
-			System.out.println(e.getMessage());
-			modelo.put("errorCambio", 1);
-			modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
+			return new ModelAndView("usuario",modelo);
+		}else{
+			return new ModelAndView("redirect:login");
 		}
-		
-		return new ModelAndView("usuario",modelo);
 	}
 	
 	@RequestMapping(path="/recuperar-contraseña", method = RequestMethod.POST)
@@ -167,19 +184,24 @@ public class ControladorUsuario {
 	}
 	
 	@RequestMapping(path="/ingresar-texto", method = RequestMethod.POST)
-	public ModelAndView ingresarTexto(Long idUsuario, String texto){
-		ModelMap modelo = new ModelMap();
-		
-		if(!texto.isEmpty()) {
+	public ModelAndView ingresarTexto(Long idUsuario, String texto,HttpServletRequest request){
+		HttpSession misession= (HttpSession) request.getSession();
+		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
+			ModelMap modelo = new ModelMap();
 			
-			servicioNota.nuevaNota(idUsuario, texto);
-			
-		}else {
-			modelo.put("errorIngreso", 1);
-			modelo.put("msjIngreso", "Debe Ingresar un texto.");
+			if(!texto.isEmpty()) {
+				
+				servicioNota.nuevaNota(idUsuario, texto);
+				
+			}else {
+				modelo.put("errorIngreso", 1);
+				modelo.put("msjIngreso", "Debe Ingresar un texto.");
+			}
+	
+			return new ModelAndView("usuario",modelo);
+		}else{
+			return new ModelAndView("redirect:login");
 		}
-
-		return new ModelAndView("usuario",modelo);
 	}
 //	ayuda para ver por consola que usuarios estan registrados
 //	@RequestMapping(path="/mostrarusuarios")

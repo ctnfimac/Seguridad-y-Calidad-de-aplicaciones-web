@@ -9,5 +9,5 @@ public interface ServicioUsuario {
 	void cambiarContrasenia(Long idUsuario, String contrasenia);
 
 	Boolean recuperarContrasenia(Long idUsuario);
-
+	Boolean getHabilitado(Long id);
 }

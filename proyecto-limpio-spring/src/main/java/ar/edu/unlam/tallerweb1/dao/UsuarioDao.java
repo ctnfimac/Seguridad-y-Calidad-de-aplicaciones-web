@@ -13,4 +13,5 @@ public interface UsuarioDao {
 	List<Usuario> obtenerUsuarios();
 	Usuario GetUsuarioById(Long idUsuario);
 	void cambiarContrasenia(Long idUsuario, String contrasenia);
+	Boolean getHabilitado(Long id);
 }

@@ -59,4 +59,9 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 			return false;
 		}	
 	}
+
+	@Override
+	public Boolean getHabilitado(Long id) {
+		return usuarioDao.getHabilitado(id);
+	}
 }

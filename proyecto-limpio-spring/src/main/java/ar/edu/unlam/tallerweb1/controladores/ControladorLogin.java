@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1.controladores;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -28,11 +29,15 @@ public class ControladorLogin {
 	*/
 	// Este metodo escucha la URL localhost:8080/NOMBRE_APP/login si la misma es invocada por metodo http GET
 	@RequestMapping("/login")
-	public ModelAndView irALogin() {
+	public ModelAndView irALogin(HttpServletRequest request) {
 		ModelMap modelo = new ModelMap();
+		HttpSession misession= (HttpSession) request.getSession();
+		if(misession.getAttribute("sessionId") == null)misession.invalidate();
+		else modelo.put("rol", misession.getAttribute("ROL"));
 		servicioLogin.cargarDatos();
 		Usuario usuario = new Usuario();
 		modelo.put("usuario", usuario);
+		
 		return new ModelAndView("login", modelo);
 	}
 
@@ -48,7 +53,8 @@ public class ControladorLogin {
 		Usuario usuarioBuscado = servicioLogin.consultarUsuario(usuario);
 		if (usuarioBuscado != null) {
 			request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
-			
+			request.getSession().setAttribute("sessionId", usuarioBuscado.getId());
+			request.getSession().setAttribute("sessionNombre", usuarioBuscado.getNombre());
 			/*
 			cacheManager.getInstance();
 			cacheManager.put("loggedUser", usuarioBuscado.getId());
@@ -87,4 +93,14 @@ public class ControladorLogin {
 	public ModelAndView inicio() {
 		return new ModelAndView("redirect:/login");
 	}
+	
+	@RequestMapping(path = "/cerrarSession", method = RequestMethod.GET)
+	public ModelAndView irACerrarSesision(HttpServletRequest request) {
+		HttpSession misession= (HttpSession) request.getSession();
+		misession.removeAttribute("sessionId");
+		misession.removeAttribute("sessionNombre");
+		misession.removeAttribute("ROL");
+		return new ModelAndView("redirect:login");
+	}
+	
 }

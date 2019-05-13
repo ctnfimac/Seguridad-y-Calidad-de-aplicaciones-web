@@ -21,7 +21,8 @@
 						<i class="fas fa-user-circle fa-fw"></i>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-						<a class="dropdown-item" href="#">Cerrar Sesión</a>
+						<a class="dropdown-item" href="login">Inicio</a>
+						<a class="dropdown-item" href="cerrarSession">Cerrar Sesión</a>
 					</div>
 				</li>
 			</ul>
@@ -58,7 +59,7 @@
 								<th class="align-middle">Nombre</th>
 								<th class="align-middle">Email</th>
 								<th class="align-middle">Estado</th>
-								<th class="align-middle">Fecha</th>
+								<th class="align-middle">Fecha de Alta</th>
 								<th class="align-middle">Operación</th>
 							  </tr>
 							</thead>
