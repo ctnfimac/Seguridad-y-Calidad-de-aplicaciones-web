@@ -1,6 +1,5 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,6 +11,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.unlam.tallerweb1.modelo.Log;
@@ -21,6 +21,11 @@ import ar.edu.unlam.tallerweb1.servicios.ServicioLog;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
 import ar.edu.unlam.tallerweb1.servicios.ServicioNota;
 import ar.edu.unlam.tallerweb1.servicios.ServicioUsuario;
+
+//para el email
+import java.util.Properties;  
+import javax.mail.*;  
+import javax.mail.internet.*;  
 
 @Controller
 public class ControladorUsuario {
@@ -223,22 +228,69 @@ public class ControladorUsuario {
 			return new ModelAndView("redirect:login");
 		}
 	}
-//	ayuda para ver por consola que usuarios estan registrados
-//	@RequestMapping(path="/mostrarusuarios")
-//	public ModelAndView mostrarUsuarios(){
-//		List<Usuario> usuarios = servicioLogin.obtenerUsuarios();
-//		ModelMap modelo = new ModelMap();
-//
-//		for(Usuario usuario : usuarios){
-//			System.out.println("nombre: " + usuario.getNombre());
-//			System.out.println("email: " + usuario.getEmail());
-//			System.out.println("contraseña: " + usuario.getNombre());
-//			System.out.println("estado: " + usuario.getEstado());
-//			System.out.println("rol: " + usuario.getRol());
-//			System.out.println("------------------------------------");
-//		}
-//		Usuario usuario = new Usuario();
-//		modelo.put("usuario", usuario);
-//		return new ModelAndView("login",modelo);
-//	}
+   
+	@RequestMapping(path="/recuperarContrasenia", method= RequestMethod.GET)
+	public ModelAndView recuperarContrasenia(@RequestParam(value="email") String email){
+		Usuario usuarioBuscado = null;
+		usuarioBuscado = servicioUsuario.getUsuarioByEmail(email);
+		ModelMap modelo = new ModelMap();
+		if(usuarioBuscado != null){
+			String msj = usuarioBuscado.getNombre() + ", este es un mensaje para recuperar tu contraseña por favor entre en el siguiente enlace http://localhost:8080/proyecto-limpio-spring/obteniendoPass?id="+usuarioBuscado.getId();
+			
+			enviarEmail(usuarioBuscado.getEmail(),msj);
+			modelo.put("errorRegistro", 0);
+			modelo.put("msjregistro", "Se envió un email a su cuenta de correo");
+		}else{
+			modelo.put("errorRegistro", 1);
+			modelo.put("error", "El usuario con el email ingresado no existe");
+		}
+		
+		
+		Usuario usuario = new Usuario();
+		modelo.put("usuario", usuario);
+		return new ModelAndView("login",modelo);
+	}
+	
+	@RequestMapping(path="/obteniendoPass", method= RequestMethod.GET)
+	public ModelAndView obteniendoPass(@RequestParam(value="id") Long id){
+		ModelMap modelo = new ModelMap();
+		modelo.put("pass", servicioUsuario.getPassById(id));
+		servicioLogin.recuperarContraseniaLog(id);
+		return new ModelAndView("recuperarPass",modelo);
+	}
+	
+	private void enviarEmail(String email,String msj){
+		  String host="c1360878.ferozo.com";  
+		  final String user="unlam@christianperalta.com";//change accordingly  
+		  final String password="M5a9h@26yF";//change accordingly  
+		    
+		  String to= email;//change accordingly  
+		  
+		   //Get the session object  
+		   Properties props = new Properties();  
+		   props.put("mail.smtp.host",host);  
+		   props.put("mail.smtp.auth", "true");  
+		     
+		    Session session = Session.getDefaultInstance(props,  
+		    new javax.mail.Authenticator() {  
+		      protected PasswordAuthentication getPasswordAuthentication() {  
+		    return new PasswordAuthentication(user,password);  
+		      }  
+		    });  
+		  
+		   //Compose the message  
+		    try {  
+		     MimeMessage message = new MimeMessage(session);  
+		     message.setFrom(new InternetAddress(user));  
+		     message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));  
+		     message.setSubject("javatpoint");  
+		     message.setText(msj);  
+		       
+		    //send the message  
+		     Transport.send(message);  
+		  
+		     //System.out.println("message sent successfully...");  
+		   
+		     } catch (MessagingException e) {e.printStackTrace();} 
+	}
 }

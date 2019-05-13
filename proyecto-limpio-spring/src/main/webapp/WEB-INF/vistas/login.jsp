@@ -108,10 +108,10 @@
 	        </button>
 	      </div>
 	      <div class="modal-body pb-3">
-	        <form action="" class="text-center px-5" method="POST" modelAttribute="">
+	        <form action="recuperarContrasenia" class="text-center px-5" method="GET" >
 	        	<input value="" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña -->
-				<input class="form-control mb-4" id="email" type="email" placeholder="Email"/>
-				<button class="btn btn-lg btn-warning btn-block text-white" Type="Submit"/>Recuperar Contraseña</button>
+				<input class="form-control mb-4" name="email" id="email" type="email" placeholder="Email"/>
+				<input class="btn btn-lg btn-warning btn-block text-white" Type="Submit" value="Recuperar Contraseña"/>
 			</form>
 	      </div>
 	    </div>

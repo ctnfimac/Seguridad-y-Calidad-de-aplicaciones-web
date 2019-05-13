@@ -56,7 +56,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 			Funcionalidad verActividadUsuarios = new Funcionalidad("Ver Historial de usuarios");
 			
 			Usuario usuario1 = new Usuario("admin@admin.com", "admin", "admin");
-			Usuario usuario2 = new Usuario("usuario1@usuario1.com", "123456", "user");
+			Usuario usuario2 = new Usuario("christian_estel87@hotmail.com", "123456", "user");
 			Usuario usuario3 = new Usuario("usuario2@usuario2.com", "123456", "user");
 			usuario1.setNombre("admin");
 			usuario2.setNombre("usuario1");
@@ -140,5 +140,27 @@ public class UsuarioDaoImpl implements UsuarioDao {
 		Boolean resultado = false;
 		resultado = usuario.getHabilitado();
 		return resultado;
+	}
+
+	@Override
+	public Usuario getUsuarioByEmail(String email) {
+		final Session session = sessionFactory.getCurrentSession();
+		Usuario usuario = null;
+		usuario = (Usuario) session.createCriteria(Usuario.class)
+				.add(Restrictions.eq("email",email))
+				.uniqueResult();
+		return usuario;
+	}
+
+	@Override
+	public String getPassById(Long id) {
+		final Session session = sessionFactory.getCurrentSession();
+		Usuario usuario = null;
+		usuario = (Usuario) session.createCriteria(Usuario.class)
+				.add(Restrictions.eq("id",id))
+				.uniqueResult();
+		String pass = "";
+		pass = usuario.getPassword();
+		return pass;
 	}
 }

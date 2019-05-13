@@ -10,4 +10,6 @@ public interface ServicioUsuario {
 
 	Boolean recuperarContrasenia(Long idUsuario);
 	Boolean getHabilitado(Long id);
+	Usuario getUsuarioByEmail(String email);
+	String getPassById(Long id);
 }

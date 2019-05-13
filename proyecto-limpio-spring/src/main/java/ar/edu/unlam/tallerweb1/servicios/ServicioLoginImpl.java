@@ -69,5 +69,13 @@ public class ServicioLoginImpl implements ServicioLogin {
 		
 		servicioLog.guardarLog(idUsuario, "Logout", mensajeLog );
 	}
+	
+	@Override
+	public void recuperarContraseniaLog(Long idUsuario)  {
+		String mensajeLog;
+		mensajeLog = String.format("El usuario con id %s recupero su contraseña. ", String.valueOf(idUsuario));
+		
+		servicioLog.guardarLog(idUsuario, "Recuperar Password", mensajeLog );
+	}
 
 }

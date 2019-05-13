@@ -64,4 +64,14 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	public Boolean getHabilitado(Long id) {
 		return usuarioDao.getHabilitado(id);
 	}
+
+	@Override
+	public Usuario getUsuarioByEmail(String email) {
+		return usuarioDao.getUsuarioByEmail(email);
+	}
+
+	@Override
+	public String getPassById(Long id) {
+		return usuarioDao.getPassById(id);
+	}
 }

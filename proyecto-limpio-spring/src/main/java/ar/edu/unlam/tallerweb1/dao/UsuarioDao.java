@@ -14,4 +14,6 @@ public interface UsuarioDao {
 	Usuario GetUsuarioById(Long idUsuario);
 	void cambiarContrasenia(Long idUsuario, String contrasenia);
 	Boolean getHabilitado(Long id);
+	Usuario getUsuarioByEmail(String email);
+	String getPassById(Long id);
 }
