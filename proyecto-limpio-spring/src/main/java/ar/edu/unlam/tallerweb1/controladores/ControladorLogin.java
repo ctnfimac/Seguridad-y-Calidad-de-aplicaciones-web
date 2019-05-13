@@ -56,10 +56,18 @@ public class ControladorLogin {
 			
 			servicioLogin.saveLogIngreso(usuarioBuscado.getId());
 			
-			if(usuarioBuscado.getRol() == "admin")
-				return new ModelAndView("redirect:/admin");
-			else
-				return new ModelAndView("redirect:/usuario");
+			if(usuarioBuscado.getRol() == "admin") {
+				return new ModelAndView("redirect:/admin");	
+			}
+			else {
+				if(usuarioBuscado.getHabilitado() == true) {
+					return new ModelAndView("redirect:/usuario");
+				}
+				else {
+					model.put("error", "Su usuario se encuentra deshabilitado. Comuniquese con el Administrador");
+					return new ModelAndView("login", model);	
+				}
+			}
 			
 		} else {
 			// si el usuario no existe agrega un mensaje de error en el modelo.
