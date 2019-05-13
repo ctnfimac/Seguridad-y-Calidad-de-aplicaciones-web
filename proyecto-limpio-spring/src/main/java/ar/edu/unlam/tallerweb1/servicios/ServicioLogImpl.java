@@ -28,11 +28,9 @@ public class ServicioLogImpl implements ServicioLog{
 	@Override
 	public void guardarLog(Long idUsuario, String funcionalildad, String mensaje) {
 		
-		Usuario usuario = usuarioDao.GetUsuarioById(idUsuario);
-		Funcionalidad funcionalidadLogin = funcionalidadDao.getFuncionalidadByDesc(funcionalildad);
 		java.util.Date fechaActual = new java.util.Date();
 		
-		Log log = new Log(usuario, funcionalidadLogin, mensaje, fechaActual );	
+		Log log = new Log(idUsuario, funcionalildad, mensaje, fechaActual );	
 		
 		logDao.guardarLog(log);
 	}
@@ -40,5 +38,10 @@ public class ServicioLogImpl implements ServicioLog{
 	@Override
 	public List<Log> getLogByUsuario(Long idUsuario) {
 		return logDao.getLogByUsuario(idUsuario);
+	}
+
+	@Override
+	public List<Log> GetAll() {
+		return logDao.getAllLogs();
 	}
 }

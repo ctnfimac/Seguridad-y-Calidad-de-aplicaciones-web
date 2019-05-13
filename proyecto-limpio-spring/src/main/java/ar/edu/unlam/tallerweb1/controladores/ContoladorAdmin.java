@@ -31,12 +31,23 @@ public class ContoladorAdmin {
 	}
 	
 	@RequestMapping(path="/admin-historial", method= RequestMethod.GET)
-	public ModelAndView adminHistorial(@RequestParam Long id){
+	public ModelAndView adminHistorial(@RequestParam(value="idUsuario") Long id){
 		ModelMap modelo = new ModelMap();
-		List<Log> historial = null;
-		//aca busco todos el historial de un usuario por id
+		
+		List<Log> historial = servicioAdmin.getLogsByIdUsuario(id);
+		
 		modelo.put("historial", historial);
-		return new ModelAndView("admin-historial", modelo);
+		return new ModelAndView("admin-historial-usuario");
+	}
+	
+	@RequestMapping(path="/historial-logs", method= RequestMethod.GET)
+	public ModelAndView historialLogs(){
+		ModelMap modelo = new ModelMap();
+		
+		List<Log> historial = servicioAdmin.getAllLogs();
+		
+		modelo.put("historial", historial);
+		return new ModelAndView("admin-historial",modelo);
 	}
 	
 	@RequestMapping(path = "/cambiarEstadoUsuario", method = RequestMethod.GET)

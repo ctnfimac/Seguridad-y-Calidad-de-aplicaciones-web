@@ -15,11 +15,9 @@ public class Log {
 	@GeneratedValue
 	private Long id;
 	
-	@ManyToOne (cascade = {CascadeType.ALL})
-	private Usuario usuario;
+	private Long idUsuario;
 	
-	@ManyToOne (cascade = {CascadeType.ALL})
-	private Funcionalidad funcionalidad;
+	private String funcionalidad;
 	
 	private String descripcion;
 	
@@ -27,11 +25,11 @@ public class Log {
 	
 	public Log(){}
 
-	public Log(Usuario usuario, Funcionalidad funcionalidad, String descripcion, Date fechaModificacionDeNota) {
-		this.usuario = usuario;
+	public Log(Long usuario, String funcionalidad, String descripcion, Date fechaModificacionDeNota) {
+		this.idUsuario = usuario;
 		this.funcionalidad = funcionalidad;
 		this.descripcion = descripcion;
-		this.fechaModificacion = fechaModificacion;
+		this.fechaModificacion = fechaModificacionDeNota;
 	}
 
 	public Long getId() {
@@ -42,19 +40,19 @@ public class Log {
 		this.id = id;
 	}
 
-	public Usuario getUsuario() {
-		return usuario;
+	public Long getUsuario() {
+		return idUsuario;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+	public void setUsuario(Long usuario) {
+		this.idUsuario = usuario;
 	}
 
-	public Funcionalidad getFuncionalidad() {
+	public String getFuncionalidad() {
 		return funcionalidad;
 	}
 
-	public void setFuncionalidad(Funcionalidad funcionalidad) {
+	public void setFuncionalidad(String funcionalidad) {
 		this.funcionalidad = funcionalidad;
 	}
 

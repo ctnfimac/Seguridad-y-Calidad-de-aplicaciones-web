@@ -9,4 +9,5 @@ public interface LogDao {
 	
 	void guardarLog(Log log);
 	List<Log> getLogByUsuario(Long idUsuario);
+	List<Log> getAllLogs();
 }

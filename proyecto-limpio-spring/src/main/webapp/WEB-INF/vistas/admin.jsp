@@ -33,7 +33,12 @@
 				  <li class="nav-item">
 					<a class="nav-link text-white" href="admin">
 					  <i class="fas fa-fw fa-table"></i>
-					  <span>Clientes</span></a>
+					  <span>Usuarios</span></a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link text-white" href="historial-logs">
+					  <i class="fas fa-fw fa-table"></i>
+					  <span>Logs</span></a>
 				  </li>
 				</ul>
 		  
@@ -74,7 +79,7 @@
 									<div class="btn-group" role="group">
 										<a href="cambiarEstadoUsuario?idUsuario=${usuario.id}&estado=true" class="btn text-white btn-danger">Habilitar</a>
 										<a href="cambiarEstadoUsuario?idUsuario=${usuario.id}&estado=false" class="btn text-white btn-primary">Deshabilitar</a>
-										<a href="#" class="btn text-white btn-warning">ver Historial</a>
+										<a href="admin-historial?idUsuario=${usuario.id}" class="btn text-white btn-warning">ver Historial</a>
 									</div>
 								</td>
 							  </tr> 

@@ -53,8 +53,8 @@ public class ControladorLogin {
 			cacheManager.getInstance();
 			cacheManager.put("loggedUser", usuarioBuscado.getId());
 			*/
-			
-			servicioLogin.saveLogIngreso(usuarioBuscado.getId());
+			Long id = usuarioBuscado.getId();
+			servicioLogin.saveLogIngreso(id);
 			
 			if(usuarioBuscado.getRol() == "admin") {
 				return new ModelAndView("redirect:/admin");	

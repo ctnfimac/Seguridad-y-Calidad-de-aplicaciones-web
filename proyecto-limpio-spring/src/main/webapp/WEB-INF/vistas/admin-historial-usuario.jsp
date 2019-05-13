@@ -31,7 +31,7 @@
 				  <li class="nav-item">
 					<a class="nav-link text-white" href="admin">
 					  <i class="fas fa-fw fa-table"></i>
-					  <span>Usuarios</span></a>
+					  <span>Volver</span></a>
 				  </li>
 				</ul>
 		  
@@ -41,32 +41,32 @@
 					<div class="card">
 					  	<div class="card">
 					  <div class="card-header">
-						Historial de actividad de la aplicación
+						Historial de actividad
 					  </div>
 					  <div class="card-body pt-0">
 						<div class="table-responsive">
 						  <table class="table text-center" id="dataTable" width="100%" cellspacing="0">
 							<thead>
 							  <tr>
-							  	<th class="align-middle">Usuario</th>
 							  	<th class="align-middle">Funcionalidad</th>
 								<th class="align-middle">Fecha y Hora</th>
 								<th class="align-middle">Descripcion</th>
 							  </tr>
 							</thead>
 							<tbody>
-								<c:forEach items = "${historial}"  var="log">
+								<c:forEach items = "${historial}"  var="historial">
 								  <tr>
-								    <td class="align-middle">${log.getUsuario()}</td>
-								  	<td class="align-middle">${log.getFuncionalidad()}</td>
-									<td class="align-middle">${log.getFechaModificacion()}</td>
-									<td class="align-middle">${log.getDescripcion()}</td>
+								    <td class="align-middle">${historial.getUsuario()}</td>
+								  	<td class="align-middle">${historial.getFuncionalidad()}</td>
+									<td class="align-middle">${historial.getFechaModificacion()}</td>
+									<td class="align-middle">${historial.getDescripcion()}</td>
 								  </tr> 
 								</c:forEach>
 							</tbody>
 						  </table>
 						</div>
 					  </div>
+					</div>
 					</div>
 				  </div>
 				  <!-- /.container-fluid --> 

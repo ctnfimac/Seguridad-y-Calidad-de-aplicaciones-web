@@ -9,4 +9,6 @@ public interface ServicioLog {
 	void guardarLog(Long idUsuario, String funcionalidad, String descripcion);
 	
 	List<Log> getLogByUsuario(Long idUsuario);
+
+	List<Log> GetAll();
 }

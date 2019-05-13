@@ -65,7 +65,7 @@
 							<tbody>
 								<c:forEach items = "${logsUsuario}" var="log">
 								  <tr>
-									<td class="align-middle">${log.getFuncionalidad().getDescripcion()}</td>
+									<td class="align-middle">${log.getFuncionalidad()}</td>
 									<td class="align-middle">${log.getFechaModificacion()}</td>
 									<th class="align-middle">${log.getDescripcion()}</th> 
 								  </tr> 
