@@ -3,12 +3,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+   <title>Registrar usuario</title>
    <link href="css/bootstrap.min.css" rel="stylesheet" >
    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
    <link href="css/estilos.css" rel="stylesheet">
 </head>
-<body>
+<body class="registrar">
 	   <c:if test="${not empty rol && rol == 'admin'}">
 		  <c:set var="link"  value = "admin"/>
        </c:if>
@@ -18,7 +19,7 @@
 	  <nav class="navbar navbar-expand navbar-dark static-top d-flex justify-content-between" style="background-color:#1C2331">
 		<a class="navbar-brand mr-1" href="admin">S&C de app web</a>  
 		 <ul class="navbar-nav ml-auto ml-md-0">
-		 	<li class="nav-item">
+			<li class="nav-item">
 				<a class="nav-link text-white" href="login">Login</a>
 			</li>
 			<li class="nav-item">
@@ -30,75 +31,51 @@
 			</li>
 		</ul>
 	  </nav>
-
-		<section id="section-login" class="mt-5">
+	  
+	  
+	  	<section id="section-registrar" class="mt-5">
 			<div class="container  bg-light ">
 				<div class="row d-flex align-items-center justify-content-center rounded-sm">
 					<div class="col-xs-12 col-md-5">
-						<h3 class="text-center pb-3">Iniciar Sesión</h3>
-						<form:form action="validar-login" class="text-center" method="POST" modelAttribute="usuario">
-							<form:input path="email" class="form-control mb-4" id="email" type="email" placeholder="Usuario o E-mail"/>
-							<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Password"/>     		  
-							<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Login</button>
-						</form:form>
-						<p class="text-center mt-4">¿No tenés una cuenta?<a href="registrarUsuarioView"> Registrarse</a></p>
-						<p class="text-center"><a href="#" data-toggle="modal" data-target="#modalRecuperarContrasenia">¿Olvidaste tu contraseña?</a></p>
+						<h3 class="text-center pb-3">Registrar Usuario</h3>
+						 <form:form action="registrar-usuario" class="text-center px-5" method="POST" modelAttribute="usuario">
+							<form:input path="email" class="form-control mb-4" id="email" type="email" placeholder="E-mail"/>
+							<form:input path="nombre" class="form-control mb-4" id="nombre" type="text" placeholder="nombre"/>
+							<div class="row">
+							    <div class="col">
+									<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Contraseña"/>
+							    </div>
+							    <div class="col">
+									<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Contraseña"/>     		      		  
+							    </div>
+							 </div>
+							<button class="btn btn-lg btn-success btn-block" Type="Submit"/>Registrar</button>
+						  </form:form>
 						<c:if test="${not empty error}">
-					        <div class="alert alert-dismissible alert-danger text-center py-2">
+					        <div class="alert alert-dismissible alert-danger text-center py-2 mt-2">
 							  ${error}!
 							</div>					  
 				        </c:if>	
 				        <c:if test="${(not empty msjregistro) && (errorRegistro==1)}">
-					        <div class="alert alert-dismissible alert-danger text-center py-2">
+					        <div class="alert alert-dismissible alert-danger text-center py-2 mt-2">
 							  ${msjregistro}!
 							</div>
 				        </c:if>
 				         <c:if test="${(not empty msjregistro) && (errorRegistro==0)}">
-					        <div class="alert alert-dismissible alert-success text-center py-2">
+					        <div class="alert alert-dismissible alert-success text-center py-2 mt-2">
 							  ${msjregistro}!
 							</div>
 				        </c:if>
 						<!-- Default form login -->
 					</div>
-					<div class="col-xs-12 col-md-7 p-0 m-0 overflow-hidden" style="background-color:#10537f">
-						<img src="img/login.jpg"/>
+					<div class="col-xs-12 col-md-7 p-0 m-0 overflow-hidden" style="background-color:#131030">
+						<img src="img/registro.jpg"/>
 					</div>
 				</div>
 			</div>
 		</section>
+
 		
-		<!-- Modal -->
-		<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content pb-3">
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">Registro de Usuario</h5>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-		      </div>
-		      <div class="modal-body pb-3">
-		        <form:form action="registrar-usuario" class="text-center px-5" method="POST" modelAttribute="usuario">
-					<form:input path="email" class="form-control mb-4" id="email" type="email" placeholder="E-mail"/>
-					<form:input path="nombre" class="form-control mb-4" id="nombre" type="text" placeholder="nombre"/>
-					<div class="row">
-					    <div class="col">
-							<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Contraseña"/>
-					    </div>
-					    <div class="col">
-							<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Contraseña"/>     		      		  
-					    </div>
-					 </div>
-					<button class="btn btn-lg btn-success btn-block" Type="Submit"/>Registrar</button>
-				</form:form>
-		      </div>
-<!-- 		      <div class="modal-footer"> -->
-<!-- 		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-<!-- 		        <button type="button" class="btn btn-primary">Save changes</button> -->
-<!-- 		      </div> -->
-		    </div>
-		  </div>
-		</div>
 		
 	<!-- Modal Recuperar Contraseña-->
 	<div class="modal fade" id="modalRecuperarContrasenia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

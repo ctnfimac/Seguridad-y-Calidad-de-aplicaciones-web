@@ -84,6 +84,17 @@ public class ControladorUsuario {
 		}
 	}
 
+	@RequestMapping(path="/registrarUsuarioView")
+	public ModelAndView irAregistrarUsuarioView(HttpServletRequest request){
+		ModelMap modelo = new ModelMap();
+		HttpSession misession= (HttpSession) request.getSession();
+		if(misession.getAttribute("sessionId") == null)misession.invalidate();
+		else modelo.put("rol", misession.getAttribute("ROL"));
+		servicioLogin.cargarDatos();	
+		modelo.put("usuario", new Usuario());
+		return new ModelAndView("registrarUsuarioView",modelo);
+	}
+	
 	@RequestMapping(path="/registrar-usuario", method = RequestMethod.POST)
 	public ModelAndView registrarUsuario(@ModelAttribute("usuario") Usuario usuarioNuevo,HttpServletRequest request){
 		ModelMap modelo = new ModelMap();
@@ -94,7 +105,7 @@ public class ControladorUsuario {
 						usuarioNuevo.getPassword().equals(usuarioNuevo.getPassword2())){
 					servicioLogin.registrarUsuario(usuarioNuevo);
 					modelo.put("errorRegistro", 0);
-					modelo.put("msjregistro", "se registro exitosamente");
+					modelo.put("msjregistro", "se registro exitosamente! <a href='login'>inicie sesión</a>");
 				}else{
 					modelo.put("errorRegistro", 1);
 					modelo.put("msjregistro", "las contraseñas son diferentes");
@@ -111,7 +122,7 @@ public class ControladorUsuario {
 		
 		Usuario usuario = new Usuario();
 		modelo.put("usuario", usuario);
-		return new ModelAndView("login",modelo);
+		return new ModelAndView("registrarUsuarioView",modelo);
 	}
 	
 	@RequestMapping(path="/registrar-nota", method = RequestMethod.POST)
