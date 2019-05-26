@@ -103,24 +103,29 @@ public class ControladorUsuario {
 
 	@RequestMapping(path="/registrar-usuario", method = RequestMethod.POST)
 	public ModelAndView registrarUsuario(@ModelAttribute("usuario") Usuario usuarioNuevo,HttpServletRequest request){
-		ModelMap modelo = new ModelMap();
+		
+	    ModelMap modelo = new ModelMap();
+		
 		try{	
-			if(this.validacionDeUsuario(usuarioNuevo)==0) {
+			if(servicioUsuario.validacionDeUsuario(usuarioNuevo)== 0 && servicioUsuario.validarPasswordUsuario(usuarioNuevo) == 0) {
 				usuarioNuevo.setPassword(Md5Crypt.md5Crypt(usuarioNuevo.getPassword().getBytes()));
 				servicioLogin.registrarUsuario(usuarioNuevo);
 				modelo.put("errorRegistro", 0);
-				modelo.put("msjregistro", "se registro exitosamente, <a href='login'>inicie sesión</a>");
-			}else if(this.validacionDeUsuario(usuarioNuevo)==1){
+				modelo.put("msjregistro", "Se registro exitosamente, <a href='login'>inicie sesión</a>");
+			}else if(servicioUsuario.validacionDeUsuario(usuarioNuevo)==1){
 				modelo.put("errorRegistro", 1);
-				modelo.put("msjregistro", "complete todos los campos");
-			}else if(this.validacionDeUsuario(usuarioNuevo)==2){
+				modelo.put("msjregistro", "Complete todos los campos");
+			}else if(servicioUsuario.validarPasswordUsuario(usuarioNuevo)==2){
 				modelo.put("errorRegistro", 1);
-				modelo.put("msjregistro", "las contraseñas son distintas");
+				modelo.put("msjregistro", "Las contraseñas son distintas");
+			}else if(servicioUsuario.validarPasswordUsuario(usuarioNuevo)==3){
+				modelo.put("errorRegistro", 1);
+				modelo.put("msjregistro", "La contraseña tiene menos de 12 caracteres");
+			}else if(servicioUsuario.validarPasswordUsuario(usuarioNuevo)== 4){
+				modelo.put("errorRegistro", 1);
+				modelo.put("msjregistro", "La contraseña ingresada contiene caracteres inválidos");
 			}
-			else if(this.validacionDeUsuario(usuarioNuevo)==3){
-				modelo.put("errorRegistro", 1);
-				modelo.put("msjregistro", "la contraseña tiene menos de 12 caracteres");
-			}
+			
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			modelo.put("errorRegistro", 1);
@@ -131,20 +136,6 @@ public class ControladorUsuario {
 		Usuario usuario = new Usuario();
 		modelo.put("usuario", usuario);
 		return new ModelAndView("registrarUsuarioView",modelo);
-	}
-	
-	private Integer validacionDeUsuario(Usuario usuarioNuevo) {
-		Integer error = 0; // 0 no hay ningun error
-		if(usuarioNuevo.getEmail().isEmpty() || usuarioNuevo.getNombre().isEmpty() 
-				|| usuarioNuevo.getPassword().isEmpty() || usuarioNuevo.getPassword2().isEmpty()){
-			error = 1 ; // los campos estan vacios
-		}else if(!usuarioNuevo.getPassword().isEmpty() && !usuarioNuevo.getPassword2().isEmpty() && 
-				!usuarioNuevo.getPassword().equals(usuarioNuevo.getPassword2())){
-			error = 2 ; // las contraseñas son distintas
-		}else if(usuarioNuevo.getPassword().length() < 12 || usuarioNuevo.getPassword2().length() < 12 ){
-			error = 3 ;// la contraseña ingresada tiene menos de 12 caracteres
-		}
-		return error;
 	}
 
 	@RequestMapping(path="/registrar-nota", method = RequestMethod.POST)
@@ -182,85 +173,69 @@ public class ControladorUsuario {
 	}
 	
 	@RequestMapping(path="/cambiar-contrasenia", method = RequestMethod.POST)
-	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuario,HttpServletRequest request){
+	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuarioLogeado ,HttpServletRequest request){
+		
 		HttpSession misession= (HttpSession) request.getSession();
+		
 		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
+			
+			long idUsuarioLogueado = (long)misession.getAttribute("sessionId");
+			
 			ModelMap modelo = new ModelMap();
-			String contraseniaAnt = usuario.getPassword();
-			String contraseniaNueva = usuario.getPassword2();
-			try{
-				if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
-					if(contraseniaAnt.equals(contraseniaNueva)){
-							if(contraseniaAnt.length() >= 12 && contraseniaNueva.length() >= 12){
-								//servicioUsuario.cambiarContrasenia(usuario.getId(), contraseniaNueva );
-								servicioUsuario.cambiarContrasenia(usuario.getId(),  Md5Crypt.md5Crypt(contraseniaNueva.getBytes()) );
-							}else{
-								modelo.put("errorCambio", 1);
-								modelo.put("msjcambio", "las contraseñas tienen menos de 12 caracteres");
-							}
-						}
-						else{
-							modelo.put("errorCambio", 1);
-							modelo.put("msjcambio", "las contraseñas son distintas");
-						}
-				}else{
-					modelo.put("errorCambio", 1);
-					modelo.put("msjcambio", "complete todos los campos");
-				}
+			
+			String contraseniaActualIngresada = Md5Crypt.md5Crypt(usuarioLogeado.getPassword().getBytes());
+			String contraseniaNuevaIngresada = usuarioLogeado.getPassword2();
+			
+			String contraseniaActualAlmacenada = servicioUsuario.getPassById(idUsuarioLogueado);
+			
+			Integer validacionContraseña = servicioUsuario.validarPasswordUsuario(usuarioLogeado);
+			
 				
-				/*
-				 if(contraseniaAnt.length() >= 12 && contraseniaNueva.length() >= 12){
-								servicioUsuario.cambiarContrasenia(idUsuario, Md5Crypt.md5Crypt(contraseniaNueva.getBytes()));
-								//System.out.println("cambiando la pass");
-								modelo.put("errorCambio", 3);
-								modelo.put("msjcambio", "Contraseña actualizada ya puede <a href='login'>iniciar sesión</a>");
-							}else{
-								modelo.put("errorCambio", 1);
-								modelo.put("msjcambio", "las contraseñas tienen menos de 12 caracteres");
-							}
-				 * */
-			}catch(Exception e){
-				//System.out.println(e.getMessage());
-				modelo.put("errorCambio", 1);
-				modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
-			}
+//				if(contraseniaActualAlmacenada == contraseniaActualIngresada) {
+//					
+					if(validacionContraseña == 0) {
+						
+						try{
+							usuarioLogeado.setPassword(Md5Crypt.md5Crypt(contraseniaNuevaIngresada.getBytes()));
+							
+							servicioUsuario.cambiarContrasenia(usuarioLogeado.getId(), usuarioLogeado.getPassword());
+							modelo.put("errorCambio", 0);
+							modelo.put("msjcambio", "Se actualizo su contraseña exitosamente, <a href='login'>inicie sesión</a>");
+						}catch(Exception e){
+							modelo.put("errorCambio", 1);
+							modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
+						}
+						
+					}else if(validacionContraseña == 1){
+						modelo.put("errorCambio", 1);
+						modelo.put("msjcambio", "Complete todos los campos");
+					}else if(validacionContraseña == 2){
+						modelo.put("errorCambio", 1);
+						modelo.put("msjcambio", "Las contraseñas son distintas");
+					}else if(validacionContraseña == 3){
+						modelo.put("errorCambio", 1);
+						modelo.put("msjcambio", "La contraseña tiene menos de 12 caracteres");
+					}else if(validacionContraseña == 4){
+						modelo.put("errorCambio", 1);
+						modelo.put("msjcambio", "La contraseña ingresada contiene caracteres inválidos");
+					}
+//				}else {
+//					modelo.put("errorCambio", 1);
+//					modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
+//				}
+			
 			List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
 			modelo.put("notas", notasUsuario);
 			modelo.put("nombre",misession.getAttribute("sessionNombre"));
 			modelo.put("nota", new Nota());
+			
 			return new ModelAndView("usuario",modelo);
 		}else{
+			
 			return new ModelAndView("redirect:login");
 		}
 	}
-	
-	
-	
-//	@RequestMapping(path="/recuperar-contraseña", method = RequestMethod.POST)
-//	public ModelAndView recuperarContraseña(Long idUsuario){
-//		ModelMap modelo = new ModelMap();
-//		
-//		Boolean recuperoExitoso = servicioUsuario.recuperarContrasenia(idUsuario);
-//		
-//		try{
-//			if(recuperoExitoso == true){
-//				
-//				modelo.put("errorRecupero", 1);
-//				modelo.put("msjRecupero", "Se ha enviado un mail de recuperación.");
-//				
-//			}else{
-//				modelo.put("errorRecupero", 1);
-//				modelo.put("msjRecupero", "El usuario no se encuentra registrado.");
-//			}
-//		}catch(Exception e){
-//			System.out.println(e.getMessage());
-//			modelo.put("errorRecupero", 1);
-//			modelo.put("msjRecupero", "Hubo problemas para recuperar la contraseña");
-//		}
-//		
-//		return new ModelAndView("usuario",modelo);
-//	}
-	
+
 	@RequestMapping(path="/ingresar-texto", method = RequestMethod.POST)
 	public ModelAndView ingresarTexto(Long idUsuario, String texto,HttpServletRequest request){
 		HttpSession misession= (HttpSession) request.getSession();
@@ -284,9 +259,11 @@ public class ControladorUsuario {
    
 	@RequestMapping(path="/recuperarContrasenia", method= RequestMethod.GET)
 	public ModelAndView recuperarContrasenia(@RequestParam(value="email") String email){
+		
 		Usuario usuarioBuscado = null;
 		usuarioBuscado = servicioUsuario.getUsuarioByEmail(email);
 		ModelMap modelo = new ModelMap();
+		
 		if(usuarioBuscado != null){
 			String idEncriptado = Md5Crypt.md5Crypt(usuarioBuscado.getId().toString().getBytes());
 			Date fechaSolicitud = new Date();
@@ -298,7 +275,7 @@ public class ControladorUsuario {
 
 			servicioUsuario.persistirSolicitudCambioDeContrasenia(usuarioBuscado.getId(),fechaSolicitud,keyLog);
 			
-			enviarEmail(usuarioBuscado.getEmail(),msj);
+			servicioUsuario.enviarEmail(usuarioBuscado.getEmail(),msj);
 			modelo.put("errorRegistro", 0);
 			modelo.put("msjregistro", "Se envió un email a su cuenta de correo");
 		}else{
@@ -337,7 +314,6 @@ public class ControladorUsuario {
 	
 	@RequestMapping(path="/actualizarPass", method = RequestMethod.POST)
 	public ModelAndView actualizarPass(@ModelAttribute("usuario") Usuario usuario,HttpServletRequest request){
-		HttpSession misession= (HttpSession) request.getSession();
 		System.out.println("id: " + this.servicioUsuario.getId(usuario.getIdE()));
 		Long idUsuario = this.servicioUsuario.getId(usuario.getIdE()) ;
 		if(idUsuario != 0 ) {
@@ -380,38 +356,4 @@ public class ControladorUsuario {
 		}
 	}
 	
-	private void enviarEmail(String email,String msj){
-		  String host="c1360878.ferozo.com";  
-		  final String user="unlam@christianperalta.com";//change accordingly  
-		  final String password="M5a9h@26yF";//change accordingly  
-		    
-		  String to= email;//change accordingly  
-		  
-		   //Get the session object  
-		   Properties props = new Properties();  
-		   props.put("mail.smtp.host",host);  
-		   props.put("mail.smtp.auth", "true");  
-		     
-		    Session session = Session.getDefaultInstance(props,  
-		    new javax.mail.Authenticator() {  
-		      protected PasswordAuthentication getPasswordAuthentication() {  
-		    return new PasswordAuthentication(user,password);  
-		      }  
-		    });  
-		  
-		   //Compose the message  
-		    try {  
-		     MimeMessage message = new MimeMessage(session); 
-		     message.addHeader("Content-type", "text/html; charset=UTF-8");
-		     message.setFrom(new InternetAddress(user));  
-		     message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));  
-		     message.setSubject("javatpoint"); 
-		    
-		     message.setText(msj, "UTF-8", "html");
-
-		     Transport.send(message);  
-		
-		   
-		     } catch (MessagingException e) {e.printStackTrace();} 
-	}
 }

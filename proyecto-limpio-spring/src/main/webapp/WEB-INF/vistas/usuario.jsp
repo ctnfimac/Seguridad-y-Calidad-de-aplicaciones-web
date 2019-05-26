@@ -120,8 +120,8 @@
 	      <div class="modal-body pb-3">
 	        <form:form action="cambiar-contrasenia" class="text-center px-5" method="POST" modelAttribute="usuario">
 	        	<form:input path="id" value="${id}" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña -->
-				<form:input path="password" class="form-control mb-4" id="password" type="password" placeholder="Contraseña Nueva"/>
-				<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Repetir nueva Contraseña"/>
+				<form:input path="password" class="form-control mb-4" id="password" type="password" placeholder="Contraseña Actual"/>
+				<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Contraseña Nueva"/>
 				<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña">
 			</form:form>
 	      </div>

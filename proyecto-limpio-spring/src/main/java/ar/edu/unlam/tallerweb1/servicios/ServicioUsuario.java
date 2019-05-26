@@ -16,4 +16,7 @@ public interface ServicioUsuario {
 	void persistirSolicitudCambioDeContrasenia(Long id, Date fechaSolicitud, String keyLog);
 	Integer usuarioCambiandoPass(String id, String keylog);
 	public Long getId(String idEncript);
+	public Integer validacionDeUsuario(Usuario usuarioNuevo);
+	public void enviarEmail(String email,String msj);
+	public Integer validarPasswordUsuario(Usuario usuarioNuevo);
 }

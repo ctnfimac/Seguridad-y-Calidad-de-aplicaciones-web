@@ -62,20 +62,25 @@ public class UsuarioDaoImpl implements UsuarioDao {
 			Funcionalidad verActividadPersonal = new Funcionalidad("Ver Historial de actividad");
 			Funcionalidad verActividadUsuarios = new Funcionalidad("Ver Historial de usuarios");
 			
-			Usuario usuario1 = new Usuario("admin@admin.com", Md5Crypt.md5Crypt("admin".getBytes()), "admin");
+			Usuario usuario1 = new Usuario("admin@admin.com", Md5Crypt.md5Crypt("admin123456".getBytes()), "admin");
 			Usuario usuario2 = new Usuario("christian_estel87@hotmail.com", Md5Crypt.md5Crypt("123456".getBytes()), "user");
-			Usuario usuario3 = new Usuario("usuario2@usuario2.com", Md5Crypt.md5Crypt("123456".getBytes()), "user");
+			Usuario usuario3 = new Usuario("usuario2@usuario2.com", Md5Crypt.md5Crypt("usuario123456".getBytes()), "user");
+			Usuario usuario4 = new Usuario("usuario3@usuario3.com", Md5Crypt.md5Crypt("usuario123456".getBytes()), "user");
 			usuario1.setNombre("admin");
 			usuario2.setNombre("Homero");
 			usuario3.setNombre("usuario2");
+			usuario4.setNombre("usuario3");
 			usuario3.setHabilitado(false);
+			usuario4.setHabilitado(true);
 			usuario1.setFechaAltaDeUsuario(new Date());
 			usuario2.setFechaAltaDeUsuario(new Date());
 			usuario3.setFechaAltaDeUsuario(new Date());
+			usuario4.setFechaAltaDeUsuario(new Date());
 			
 			session.save(usuario1);
 			session.save(usuario2);
 			session.save(usuario3);
+			session.save(usuario4);
 			session.save(login);
 			session.save(logout);		
 			session.save(registro);
@@ -121,20 +126,10 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	public void cambiarContrasenia(Long idUsuario, String contrasenia) {
 		
 		final Session session = sessionFactory.getCurrentSession();
-//		Transaction tx = null;
-		
-//	      try{
-//	         tx = session.beginTransaction();
-	         Usuario user = (Usuario)session.get(Usuario.class, idUsuario); 
-	         user.setPassword(contrasenia);
-	         session.update(user); 
-//	         tx.commit();
-//	      }catch (HibernateException e) {
-//	         if (tx!=null) tx.rollback();
-//	         e.printStackTrace(); 
-//	      }finally {
-//	         session.close(); 
-//	      }		
+
+	     Usuario user = (Usuario)session.get(Usuario.class, idUsuario); 
+	     user.setPassword(contrasenia);
+	     session.update(user); 
 	}
 
 	@Override
