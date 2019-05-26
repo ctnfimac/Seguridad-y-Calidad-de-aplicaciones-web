@@ -67,39 +67,6 @@
 			</div>
 		</section>
 		
-		<!-- Modal -->
-		<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content pb-3">
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">Registro de Usuario</h5>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-		      </div>
-		      <div class="modal-body pb-3">
-		        <form:form action="registrar-usuario" class="text-center px-5" method="POST" modelAttribute="usuario">
-					<form:input path="email" class="form-control mb-4" id="email" type="email" placeholder="E-mail"/>
-					<form:input path="nombre" class="form-control mb-4" id="nombre" type="text" placeholder="nombre"/>
-					<div class="row">
-					    <div class="col">
-							<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Contraseña"/>
-					    </div>
-					    <div class="col">
-							<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Contraseña"/>     		      		  
-					    </div>
-					 </div>
-					<button class="btn btn-lg btn-success btn-block" Type="Submit"/>Registrar</button>
-				</form:form>
-		      </div>
-<!-- 		      <div class="modal-footer"> -->
-<!-- 		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-<!-- 		        <button type="button" class="btn btn-primary">Save changes</button> -->
-<!-- 		      </div> -->
-		    </div>
-		  </div>
-		</div>
-		
 	<!-- Modal Recuperar Contraseña-->
 	<div class="modal fade" id="modalRecuperarContrasenia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">

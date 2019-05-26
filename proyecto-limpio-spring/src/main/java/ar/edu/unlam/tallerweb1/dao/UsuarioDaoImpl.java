@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.dao;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -168,4 +170,102 @@ public class UsuarioDaoImpl implements UsuarioDao {
 		pass = usuario.getPassword();
 		return pass;
 	}
+
+	@Override
+	public void persistirSolicitudCambioDeContrasenia(Long id, Date fechaSolicitud, String keyLog) {
+		final Session session = sessionFactory.getCurrentSession();
+		Usuario usuario = null;
+		usuario = (Usuario) session.createCriteria(Usuario.class)
+				.add(Restrictions.eq("id", id))
+				.uniqueResult();
+		
+		usuario.setFechaDeRecuperacionDePass(fechaSolicitud);
+		usuario.setKeyLog(keyLog);
+		usuario.setRecuperandoPass(true);
+		
+		System.out.println("nombre: " + usuario.getNombre());
+		System.out.println("keylog: " + usuario.getKeyLog());
+		System.out.println("getFechaDeRecuperacionDePass: " + usuario.getFechaDeRecuperacionDePass());
+		System.out.println("recuperandoPass: " + usuario.getRecuperandoPass());
+		session.update(usuario);
+	}
+
+	@Override
+	public Integer usuarioCambiandoPass(String id, String keylog) {
+		Integer respuesta = 0;
+		final Session session = sessionFactory.getCurrentSession();
+		Usuario usuario = null;
+		
+		//obtener lista de ids y comparar con el parametro id
+		List<Usuario> listaUsuarios = session.createCriteria(Usuario.class)
+						.list();
+		Long idBuscado = 0L;
+		for(Usuario u : listaUsuarios){
+			String encrypted2 = Md5Crypt.md5Crypt(u.getId().toString().getBytes(), id);
+			if(id.equals(encrypted2)){
+				idBuscado = u.getId();
+				break;
+			}
+		}
+	
+		usuario = (Usuario) session.createCriteria(Usuario.class)
+				.add(Restrictions.eq("id", idBuscado))
+				.uniqueResult();
+		System.out.println("usuario keyLog:" + usuario.getKeyLog());
+		if(usuario != null){
+			// preguntar si el valor de recuperandoPass esta en true
+			if(usuario.getRecuperandoPass()){
+				// preguntar si el tiempo esta dentro de lo establecido
+				SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+				Date fecha = new Date();
+				Long diferenciaDeTiempo = fecha.getTime() - usuario.getFechaDeRecuperacionDePass().getTime();
+				//long diffMinutes = diferenciaDeTiempo / (60 * 1000) % 60;
+				long diffSeconds = diferenciaDeTiempo / 1000;// % 60;
+				//System.out.println(diffSeconds + " segundos");
+				if(diffSeconds > 0 && diffSeconds < 120){
+					System.out.println("keylog en servicio: " + keylog);
+					System.out.println("usuario.getKeyLog en servicio: " + usuario.getKeyLog());
+					if(keylog.equals(usuario.getKeyLog())){
+						usuario.setKeyLog("");
+						usuario.setRecuperandoPass(false);
+						usuario.setFechaDeRecuperacionDePass(null);
+						respuesta = 1; // todo ok para realizar el cammbio de pass
+					}else{
+						usuario.setKeyLog("");
+						usuario.setRecuperandoPass(false);
+						usuario.setFechaDeRecuperacionDePass(null);
+						respuesta = 4; // no coincide los keylog
+					}
+				}else{
+					respuesta = 3;//error de diferencia de tiempo
+					usuario.setKeyLog("");
+					usuario.setRecuperandoPass(false);
+					usuario.setFechaDeRecuperacionDePass(null);
+					//reseteo el keylog, fecha y estado
+				}
+			}else respuesta = 2; // no esta habilitado el flag recuperandoPass
+		}
+		System.out.println("respuesta:" + respuesta);
+		return respuesta;
+	}
+
+	@Override
+	public Long getId(String idEncript) {
+		final Session session = sessionFactory.getCurrentSession();
+		Usuario usuario = null;
+
+		//obtener lista de ids y comparar con el parametro id
+		List<Usuario> listaUsuarios = session.createCriteria(Usuario.class)
+						.list();
+		Long idBuscado = 0L;
+		for(Usuario u : listaUsuarios){
+			String encrypted2 = Md5Crypt.md5Crypt(u.getId().toString().getBytes(), idEncript);
+			if(idEncript.equals(encrypted2)){
+				idBuscado = u.getId();
+				break;
+			}
+		}
+		return idBuscado;
+	}
 }
+

@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -73,5 +74,20 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	@Override
 	public String getPassById(Long id) {
 		return usuarioDao.getPassById(id);
+	}
+
+	@Override
+	public void persistirSolicitudCambioDeContrasenia(Long id, Date fechaSolicitud, String keyLog) {
+		usuarioDao.persistirSolicitudCambioDeContrasenia(id, fechaSolicitud, keyLog);
+	}
+
+	@Override
+	public Integer usuarioCambiandoPass(String id, String keylog) {
+		return usuarioDao.usuarioCambiandoPass(id, keylog);
+	}
+
+	@Override
+	public Long getId(String idEncript) {
+		return usuarioDao.getId(idEncript);
 	}
 }

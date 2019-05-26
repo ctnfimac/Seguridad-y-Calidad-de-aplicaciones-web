@@ -14,6 +14,10 @@ public class Usuario {
 	@Id
 	@GeneratedValue
 	private Long id;
+	
+	@Transient
+	private String idE;
+	
 	@Column(unique = true)
 	private String email;
 	private String nombre;
@@ -52,6 +56,15 @@ public class Usuario {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	public String getIdE() {
+		return idE;
+	}
+
+	public void setIdE(String idE) {
+		this.idE = idE;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -111,6 +124,34 @@ public class Usuario {
 	}
 
 	public void setFechaModificacion(Date fechaUltimaModificacion) {
+		this.fechaUltimaModificacion = fechaUltimaModificacion;
+	}
+
+	public String getKeyLog() {
+		return keyLog;
+	}
+
+	public void setKeyLog(String keyLog) {
+		this.keyLog = keyLog;
+	}
+
+	public Date getFechaDeRecuperacionDePass() {
+		return fechaDeRecuperacionDePass;
+	}
+
+	public void setFechaDeRecuperacionDePass(Date fechaDeRecuperacionDePass) {
+		this.fechaDeRecuperacionDePass = fechaDeRecuperacionDePass;
+	}
+
+	public Boolean getRecuperandoPass() {
+		return recuperandoPass;
+	}
+
+	public void setRecuperandoPass(Boolean recuperandoPass) {
+		this.recuperandoPass = recuperandoPass;
+	}
+
+	public void setFechaUltimaModificacion(Date fechaUltimaModificacion) {
 		this.fechaUltimaModificacion = fechaUltimaModificacion;
 	}
 	

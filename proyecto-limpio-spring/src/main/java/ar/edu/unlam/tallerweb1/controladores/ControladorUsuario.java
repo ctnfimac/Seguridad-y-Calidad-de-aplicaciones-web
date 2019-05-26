@@ -1,12 +1,21 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import java.util.Date;
 import java.util.List;
+//para el email
+import java.util.Properties;
 
 import javax.inject.Inject;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -22,12 +31,7 @@ import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLog;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
 import ar.edu.unlam.tallerweb1.servicios.ServicioNota;
-import ar.edu.unlam.tallerweb1.servicios.ServicioUsuario;
-
-//para el email
-import java.util.Properties;  
-import javax.mail.*;  
-import javax.mail.internet.*;  
+import ar.edu.unlam.tallerweb1.servicios.ServicioUsuario;  
 
 @Controller
 public class ControladorUsuario {
@@ -187,7 +191,13 @@ public class ControladorUsuario {
 			try{
 				if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
 					if(contraseniaAnt.equals(contraseniaNueva)){
-							servicioUsuario.cambiarContrasenia(usuario.getId(), contraseniaNueva );
+							if(contraseniaAnt.length() >= 12 && contraseniaNueva.length() >= 12){
+								//servicioUsuario.cambiarContrasenia(usuario.getId(), contraseniaNueva );
+								servicioUsuario.cambiarContrasenia(usuario.getId(),  Md5Crypt.md5Crypt(contraseniaNueva.getBytes()) );
+							}else{
+								modelo.put("errorCambio", 1);
+								modelo.put("msjcambio", "las contraseñas tienen menos de 12 caracteres");
+							}
 						}
 						else{
 							modelo.put("errorCambio", 1);
@@ -197,8 +207,20 @@ public class ControladorUsuario {
 					modelo.put("errorCambio", 1);
 					modelo.put("msjcambio", "complete todos los campos");
 				}
+				
+				/*
+				 if(contraseniaAnt.length() >= 12 && contraseniaNueva.length() >= 12){
+								servicioUsuario.cambiarContrasenia(idUsuario, Md5Crypt.md5Crypt(contraseniaNueva.getBytes()));
+								//System.out.println("cambiando la pass");
+								modelo.put("errorCambio", 3);
+								modelo.put("msjcambio", "Contraseña actualizada ya puede <a href='login'>iniciar sesión</a>");
+							}else{
+								modelo.put("errorCambio", 1);
+								modelo.put("msjcambio", "las contraseñas tienen menos de 12 caracteres");
+							}
+				 * */
 			}catch(Exception e){
-				System.out.println(e.getMessage());
+				//System.out.println(e.getMessage());
 				modelo.put("errorCambio", 1);
 				modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
 			}
@@ -212,30 +234,32 @@ public class ControladorUsuario {
 		}
 	}
 	
-	@RequestMapping(path="/recuperar-contraseña", method = RequestMethod.POST)
-	public ModelAndView recuperarContraseña(Long idUsuario){
-		ModelMap modelo = new ModelMap();
-		
-		Boolean recuperoExitoso = servicioUsuario.recuperarContrasenia(idUsuario);
-		
-		try{
-			if(recuperoExitoso == true){
-				
-				modelo.put("errorRecupero", 1);
-				modelo.put("msjRecupero", "Se ha enviado un mail de recuperación.");
-				
-			}else{
-				modelo.put("errorRecupero", 1);
-				modelo.put("msjRecupero", "El usuario no se encuentra registrado.");
-			}
-		}catch(Exception e){
-			System.out.println(e.getMessage());
-			modelo.put("errorRecupero", 1);
-			modelo.put("msjRecupero", "Hubo problemas para recuperar la contraseña");
-		}
-		
-		return new ModelAndView("usuario",modelo);
-	}
+	
+	
+//	@RequestMapping(path="/recuperar-contraseña", method = RequestMethod.POST)
+//	public ModelAndView recuperarContraseña(Long idUsuario){
+//		ModelMap modelo = new ModelMap();
+//		
+//		Boolean recuperoExitoso = servicioUsuario.recuperarContrasenia(idUsuario);
+//		
+//		try{
+//			if(recuperoExitoso == true){
+//				
+//				modelo.put("errorRecupero", 1);
+//				modelo.put("msjRecupero", "Se ha enviado un mail de recuperación.");
+//				
+//			}else{
+//				modelo.put("errorRecupero", 1);
+//				modelo.put("msjRecupero", "El usuario no se encuentra registrado.");
+//			}
+//		}catch(Exception e){
+//			System.out.println(e.getMessage());
+//			modelo.put("errorRecupero", 1);
+//			modelo.put("msjRecupero", "Hubo problemas para recuperar la contraseña");
+//		}
+//		
+//		return new ModelAndView("usuario",modelo);
+//	}
 	
 	@RequestMapping(path="/ingresar-texto", method = RequestMethod.POST)
 	public ModelAndView ingresarTexto(Long idUsuario, String texto,HttpServletRequest request){
@@ -264,7 +288,15 @@ public class ControladorUsuario {
 		usuarioBuscado = servicioUsuario.getUsuarioByEmail(email);
 		ModelMap modelo = new ModelMap();
 		if(usuarioBuscado != null){
-			String msj = usuarioBuscado.getNombre() + ", este es un mensaje para recuperar tu contraseña por favor entre en el siguiente enlace http://localhost:8080/proyecto-limpio-spring/obteniendoPass?id="+usuarioBuscado.getId();
+			String idEncriptado = Md5Crypt.md5Crypt(usuarioBuscado.getId().toString().getBytes());
+			Date fechaSolicitud = new Date();
+			String keyLog = Md5Crypt.md5Crypt((usuarioBuscado.getId().toString()+ fechaSolicitud.toString()).getBytes());
+			System.out.println("keyLog original:" + keyLog);
+			String link = "http://localhost:8080/proyecto-limpio-spring/obteniendoPass?id="+idEncriptado+"&keylog="+keyLog;
+			//String msj = usuarioBuscado.getNombre() + ", este es un mensaje para recuperar tu contraseña por favor entre al siguiente enlace: <a href='christianperalta.com'>enlace</a>" ;
+			String msj = "<h3>"+ usuarioBuscado.getNombre() +", si ha solicitado recuperar su contraseña haga click en el siguiente <a href='"+link+"'>Link</a> </h3>";
+
+			servicioUsuario.persistirSolicitudCambioDeContrasenia(usuarioBuscado.getId(),fechaSolicitud,keyLog);
 			
 			enviarEmail(usuarioBuscado.getEmail(),msj);
 			modelo.put("errorRegistro", 0);
@@ -273,19 +305,79 @@ public class ControladorUsuario {
 			modelo.put("errorRegistro", 1);
 			modelo.put("error", "El usuario con el email ingresado no existe");
 		}
-		
-		
 		Usuario usuario = new Usuario();
 		modelo.put("usuario", usuario);
 		return new ModelAndView("login",modelo);
 	}
 	
 	@RequestMapping(path="/obteniendoPass", method= RequestMethod.GET)
-	public ModelAndView obteniendoPass(@RequestParam(value="id") Long id){
+	public ModelAndView obteniendoPass(@RequestParam(value="id") String id, @RequestParam(value="keylog") String keylog){
 		ModelMap modelo = new ModelMap();
-		modelo.put("pass", servicioUsuario.getPassById(id));
-		servicioLogin.recuperarContraseniaLog(id);
-		return new ModelAndView("recuperarPass",modelo);
+		modelo.put("usuario", new Usuario());
+		// busco si el usuario indicado esta cambiando de contraseña, si es asi entro a la
+		// vista de cambiarcontraseña si no es asi voy a otra vista
+		Integer respuesta = servicioUsuario.usuarioCambiandoPass(id,keylog);
+		
+		if(respuesta == 0) {
+			modelo.put("errorRegistro", 1);
+			modelo.put("msjregistro", "error al querer recuperar la contraseña");
+			return new ModelAndView("redirect: login");
+		}else if(respuesta == 1){
+			modelo.put("usuario", new Usuario());
+			modelo.put("id", id);
+			System.out.println("id a modificar:" + this.servicioUsuario.getId(id));
+			return new ModelAndView("cambiarContrasenia",modelo);
+		}else{
+			modelo.put("errorRegistro", 1);
+			modelo.put("msjregistro", "error al querer recuperar la contraseña");
+			return new ModelAndView("redirect: login");
+		}
+
+	}
+	
+	@RequestMapping(path="/actualizarPass", method = RequestMethod.POST)
+	public ModelAndView actualizarPass(@ModelAttribute("usuario") Usuario usuario,HttpServletRequest request){
+		HttpSession misession= (HttpSession) request.getSession();
+		System.out.println("id: " + this.servicioUsuario.getId(usuario.getIdE()));
+		Long idUsuario = this.servicioUsuario.getId(usuario.getIdE()) ;
+		if(idUsuario != 0 ) {
+			ModelMap modelo = new ModelMap();
+			String contraseniaAnt = usuario.getPassword();
+			String contraseniaNueva = usuario.getPassword2();
+			try{
+				if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
+					if(contraseniaAnt.equals(contraseniaNueva)){
+							if(contraseniaAnt.length() >= 12 && contraseniaNueva.length() >= 12){
+								servicioUsuario.cambiarContrasenia(idUsuario, Md5Crypt.md5Crypt(contraseniaNueva.getBytes()));
+								//System.out.println("cambiando la pass");
+								modelo.put("errorCambio", 3);
+								modelo.put("msjcambio", "Contraseña actualizada ya puede <a href='login'>iniciar sesión</a>");
+							}else{
+								modelo.put("errorCambio", 1);
+								modelo.put("msjcambio", "las contraseñas tienen menos de 12 caracteres");
+							}
+						
+						}
+						else{
+							modelo.put("errorCambio", 1);
+							modelo.put("msjcambio", "las contraseñas son distintas");
+						}
+				}else{
+					modelo.put("errorCambio", 1);
+					modelo.put("msjcambio", "complete todos los campos");
+				}
+			}catch(Exception e){
+				//System.out.println(e.getMessage());
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
+			}
+			modelo.put("id", usuario.getIdE());
+			modelo.put("usuario", new Usuario());
+			System.out.println("id a modificar:" + this.servicioUsuario.getId(usuario.getIdE()));
+			return new ModelAndView("cambiarContrasenia",modelo);
+		}else{
+			return new ModelAndView("redirect:login");
+		}
 	}
 	
 	private void enviarEmail(String email,String msj){
@@ -309,16 +401,16 @@ public class ControladorUsuario {
 		  
 		   //Compose the message  
 		    try {  
-		     MimeMessage message = new MimeMessage(session);  
+		     MimeMessage message = new MimeMessage(session); 
+		     message.addHeader("Content-type", "text/html; charset=UTF-8");
 		     message.setFrom(new InternetAddress(user));  
 		     message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));  
-		     message.setSubject("javatpoint");  
-		     message.setText(msj);  
-		       
-		    //send the message  
+		     message.setSubject("javatpoint"); 
+		    
+		     message.setText(msj, "UTF-8", "html");
+
 		     Transport.send(message);  
-		  
-		     //System.out.println("message sent successfully...");  
+		
 		   
 		     } catch (MessagingException e) {e.printStackTrace();} 
 	}
