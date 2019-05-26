@@ -17,6 +17,7 @@ public class Usuario {
 	@Column(unique = true)
 	private String email;
 	private String nombre;
+	
 	private String password;
 	@Transient
 	private String password2;
@@ -24,6 +25,10 @@ public class Usuario {
 	private Boolean habilitado = true; // true: habilitado, false: deshabilitado
 	private Date fechaAltaDeUsuario;
 	private Date fechaUltimaModificacion;
+	
+	private String keyLog; // condigo de hash el cual se guarda al enviar el email para recuperar contraseña
+	private Date fechaDeRecuperacionDePass; // se pone la fecha y hora actual al momento de realizar la peticion de recuperar contraseña
+	private Boolean recuperandoPass = false; // flag para garantizar que solo se realiza una vez el cambio de contraseña con el link enviado
 	
 	public Usuario(){}
 	

@@ -6,6 +6,8 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -94,37 +96,53 @@ public class ControladorUsuario {
 		modelo.put("usuario", new Usuario());
 		return new ModelAndView("registrarUsuarioView",modelo);
 	}
-	
+
 	@RequestMapping(path="/registrar-usuario", method = RequestMethod.POST)
 	public ModelAndView registrarUsuario(@ModelAttribute("usuario") Usuario usuarioNuevo,HttpServletRequest request){
 		ModelMap modelo = new ModelMap();
-		try{
-			if(!usuarioNuevo.getEmail().isEmpty() && !usuarioNuevo.getNombre().isEmpty() 
-					&& !usuarioNuevo.getPassword().isEmpty() && !usuarioNuevo.getPassword2().isEmpty()){
-				if(!usuarioNuevo.getPassword().isEmpty() && !usuarioNuevo.getPassword2().isEmpty() & 
-						usuarioNuevo.getPassword().equals(usuarioNuevo.getPassword2())){
-					servicioLogin.registrarUsuario(usuarioNuevo);
-					modelo.put("errorRegistro", 0);
-					modelo.put("msjregistro", "se registro exitosamente! <a href='login'>inicie sesión</a>");
-				}else{
-					modelo.put("errorRegistro", 1);
-					modelo.put("msjregistro", "las contraseñas son diferentes");
-				}
-			}else{
+		try{	
+			if(this.validacionDeUsuario(usuarioNuevo)==0) {
+				usuarioNuevo.setPassword(Md5Crypt.md5Crypt(usuarioNuevo.getPassword().getBytes()));
+				servicioLogin.registrarUsuario(usuarioNuevo);
+				modelo.put("errorRegistro", 0);
+				modelo.put("msjregistro", "se registro exitosamente, <a href='login'>inicie sesión</a>");
+			}else if(this.validacionDeUsuario(usuarioNuevo)==1){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "complete todos los campos");
+			}else if(this.validacionDeUsuario(usuarioNuevo)==2){
+				modelo.put("errorRegistro", 1);
+				modelo.put("msjregistro", "las contraseñas son distintas");
+			}
+			else if(this.validacionDeUsuario(usuarioNuevo)==3){
+				modelo.put("errorRegistro", 1);
+				modelo.put("msjregistro", "la contraseña tiene menos de 12 caracteres");
 			}
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			modelo.put("errorRegistro", 1);
 			modelo.put("msjregistro", "Hubo problemas para dar de alta su usuario");
 		}
-		
+
+        
 		Usuario usuario = new Usuario();
 		modelo.put("usuario", usuario);
 		return new ModelAndView("registrarUsuarioView",modelo);
 	}
 	
+	private Integer validacionDeUsuario(Usuario usuarioNuevo) {
+		Integer error = 0; // 0 no hay ningun error
+		if(usuarioNuevo.getEmail().isEmpty() || usuarioNuevo.getNombre().isEmpty() 
+				|| usuarioNuevo.getPassword().isEmpty() || usuarioNuevo.getPassword2().isEmpty()){
+			error = 1 ; // los campos estan vacios
+		}else if(!usuarioNuevo.getPassword().isEmpty() && !usuarioNuevo.getPassword2().isEmpty() && 
+				!usuarioNuevo.getPassword().equals(usuarioNuevo.getPassword2())){
+			error = 2 ; // las contraseñas son distintas
+		}else if(usuarioNuevo.getPassword().length() < 12 || usuarioNuevo.getPassword2().length() < 12 ){
+			error = 3 ;// la contraseña ingresada tiene menos de 12 caracteres
+		}
+		return error;
+	}
+
 	@RequestMapping(path="/registrar-nota", method = RequestMethod.POST)
 	public ModelAndView registrarNota(@ModelAttribute("nota") Nota nuevaNota,HttpServletRequest request){
 		HttpSession misession= (HttpSession) request.getSession();
