@@ -176,62 +176,43 @@ public class ControladorUsuario {
 	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuarioLogeado ,HttpServletRequest request){
 		
 		HttpSession misession= (HttpSession) request.getSession();
-		
+	
 		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
-			
 			long idUsuarioLogueado = (long)misession.getAttribute("sessionId");
-			
 			ModelMap modelo = new ModelMap();
-			
-			String contraseniaActualIngresada = Md5Crypt.md5Crypt(usuarioLogeado.getPassword().getBytes());
-			String contraseniaNuevaIngresada = usuarioLogeado.getPassword2();
-			
-			String contraseniaActualAlmacenada = servicioUsuario.getPassById(idUsuarioLogueado);
-			
+			usuarioLogeado.setId(idUsuarioLogueado);
 			Integer validacionContraseña = servicioUsuario.validarPasswordUsuario(usuarioLogeado);
-			
+					
+			if(validacionContraseña == 0) {
+				try{
+					usuarioLogeado.setPassword(Md5Crypt.md5Crypt(usuarioLogeado.getPassword2().getBytes()));
+					servicioUsuario.cambiarContrasenia(idUsuarioLogueado/*usuarioLogeado.getId()*/, usuarioLogeado.getPassword());
+					modelo.put("errorCambio", 0);
+					modelo.put("msjcambio", "Se actualizo su contraseña exitosamente");
+				}catch(Exception e){
+					modelo.put("errorCambio", 1);
+					modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
+				}
+			}else if(validacionContraseña == 1){
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "Complete todos los campos");
+			}else if(validacionContraseña == 2){
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "contraseña actual incorrecta");
+			}else if(validacionContraseña == 3){
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "La contraseña tiene menos de 12 caracteres");
+			}else if(validacionContraseña == 4){
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "La contraseña ingresada contiene caracteres inválidos");
+			}
+				List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
+				modelo.put("notas", notasUsuario);
+				modelo.put("nombre",misession.getAttribute("sessionNombre"));
+				modelo.put("nota", new Nota());
 				
-//				if(contraseniaActualAlmacenada == contraseniaActualIngresada) {
-//					
-					if(validacionContraseña == 0) {
-						
-						try{
-							usuarioLogeado.setPassword(Md5Crypt.md5Crypt(contraseniaNuevaIngresada.getBytes()));
-							
-							servicioUsuario.cambiarContrasenia(usuarioLogeado.getId(), usuarioLogeado.getPassword());
-							modelo.put("errorCambio", 0);
-							modelo.put("msjcambio", "Se actualizo su contraseña exitosamente, <a href='login'>inicie sesión</a>");
-						}catch(Exception e){
-							modelo.put("errorCambio", 1);
-							modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
-						}
-						
-					}else if(validacionContraseña == 1){
-						modelo.put("errorCambio", 1);
-						modelo.put("msjcambio", "Complete todos los campos");
-					}else if(validacionContraseña == 2){
-						modelo.put("errorCambio", 1);
-						modelo.put("msjcambio", "Las contraseñas son distintas");
-					}else if(validacionContraseña == 3){
-						modelo.put("errorCambio", 1);
-						modelo.put("msjcambio", "La contraseña tiene menos de 12 caracteres");
-					}else if(validacionContraseña == 4){
-						modelo.put("errorCambio", 1);
-						modelo.put("msjcambio", "La contraseña ingresada contiene caracteres inválidos");
-					}
-//				}else {
-//					modelo.put("errorCambio", 1);
-//					modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
-//				}
-			
-			List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
-			modelo.put("notas", notasUsuario);
-			modelo.put("nombre",misession.getAttribute("sessionNombre"));
-			modelo.put("nota", new Nota());
-			
-			return new ModelAndView("usuario",modelo);
+				return new ModelAndView("usuario",modelo);
 		}else{
-			
 			return new ModelAndView("redirect:login");
 		}
 	}

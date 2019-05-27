@@ -16,6 +16,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -122,18 +123,21 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 		
 		Integer error = 0; // 0 no hay ningun error
 		
+		String contraseniaActualAlmacenada = usuarioDao.getPassById(usuarioNuevo.getId());
+		String encrypted2 = Md5Crypt.md5Crypt(usuarioNuevo.getPassword().getBytes(), contraseniaActualAlmacenada);
+		
 		if(usuarioNuevo.getPassword().isEmpty() || usuarioNuevo.getPassword2().isEmpty() ){
 			return error = 1 ; // campos icompletos
-		}else if(!usuarioNuevo.getPassword().isEmpty() && !usuarioNuevo.getPassword2().isEmpty() && 
-				!usuarioNuevo.getPassword().equals(usuarioNuevo.getPassword2())){
-			return error = 2 ; // las contraseñas son distintas
-		}else if(contraseñasNoPermitidas.contains(usuarioNuevo.getPassword()) ){
+		}else if(!contraseniaActualAlmacenada.equals(encrypted2)){
+			return error = 2 ; // las contraseña actual en el usuario no coindide con 
+							   // la contraseña actual ingresada en el formulario
+		}else if(contraseñasNoPermitidas.contains(usuarioNuevo.getPassword2()) ){
 			return error = 4 ;// contraseña dentro de la lista de no permitidas
-		}else if(usuarioNuevo.getPassword().length() < 12 || usuarioNuevo.getPassword2().length() < 12 ){
+		}else if(usuarioNuevo.getPassword2().length() < 12 ){
 			return error = 3 ;// la contraseña ingresada tiene menos de 12 caracteres
-		}else if(StringUtils.containsWhitespace(usuarioNuevo.getPassword()) || StringUtils.containsWhitespace(usuarioNuevo.getPassword2()) ){
+		}else if(StringUtils.containsWhitespace(usuarioNuevo.getPassword2()) ){
 			return error = 4 ;// la contraseña contiene espacios en blanco
-		}else if(!this.ValidarCaracteres(usuarioNuevo.getPassword()) || !this.ValidarCaracteres(usuarioNuevo.getPassword2()) ) 			
+		}else if(!this.ValidarCaracteres(usuarioNuevo.getPassword2()) ) 			
 			return error = 4 ;// la contraseña contiene emogis
 		
 		return error;	

@@ -49,7 +49,22 @@
 				</ul>
 		  
 				<div id="content-wrapper" style="background-color:#e6e6e6">
+				
 				  <div class="container-fluid">
+				  
+				  <c:if test="${not empty errorCambio && errorCambio == 0}">
+				  	<div class="alert alert-dismissible alert-success">
+					  <button type="button" class="close" data-dismiss="alert">&times;</button>
+					  <strong>Felicitaciones!</strong> ${msjcambio}
+				    </div>
+				  </c:if>
+				  <c:if test="${not empty errorCambio && errorCambio == 1}">
+				  	<div class="alert alert-dismissible alert-danger">
+					  <button type="button" class="close" data-dismiss="alert">&times;</button>
+					  <strong>Error!</strong> ${msjcambio}
+				    </div>
+				  </c:if>
+
 					<!-- DataTables Example -->
 					<div class="card">
 					  <div class="card-header">
@@ -119,8 +134,8 @@
 	      </div>
 	      <div class="modal-body pb-3">
 	        <form:form action="cambiar-contrasenia" class="text-center px-5" method="POST" modelAttribute="usuario">
-	        	<form:input path="id" value="${id}" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña -->
-				<form:input path="password" class="form-control mb-4" id="password" type="password" placeholder="Contraseña Actual"/>
+<%-- 	        	<form:input path="id" value="${id}" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña --> --%>
+				<form:input path="password" class="form-control mb-4" id="password" type="password" name="password" placeholder="Contraseña Actual"/> 
 				<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" /><span id="password"></span>
 				<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña">
 			</form:form>

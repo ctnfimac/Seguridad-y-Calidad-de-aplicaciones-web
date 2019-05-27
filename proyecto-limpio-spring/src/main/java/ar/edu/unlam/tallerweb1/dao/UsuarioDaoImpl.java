@@ -177,11 +177,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 		usuario.setFechaDeRecuperacionDePass(fechaSolicitud);
 		usuario.setKeyLog(keyLog);
 		usuario.setRecuperandoPass(true);
-		
-		System.out.println("nombre: " + usuario.getNombre());
-		System.out.println("keylog: " + usuario.getKeyLog());
-		System.out.println("getFechaDeRecuperacionDePass: " + usuario.getFechaDeRecuperacionDePass());
-		System.out.println("recuperandoPass: " + usuario.getRecuperandoPass());
+
 		session.update(usuario);
 	}
 
@@ -206,7 +202,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 		usuario = (Usuario) session.createCriteria(Usuario.class)
 				.add(Restrictions.eq("id", idBuscado))
 				.uniqueResult();
-		System.out.println("usuario keyLog:" + usuario.getKeyLog());
+
 		if(usuario != null){
 			// preguntar si el valor de recuperandoPass esta en true
 			if(usuario.getRecuperandoPass()){
@@ -218,8 +214,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 				long diffSeconds = diferenciaDeTiempo / 1000;// % 60;
 				//System.out.println(diffSeconds + " segundos");
 				if(diffSeconds > 0 && diffSeconds < 120){
-					System.out.println("keylog en servicio: " + keylog);
-					System.out.println("usuario.getKeyLog en servicio: " + usuario.getKeyLog());
+
 					if(keylog.equals(usuario.getKeyLog())){
 						usuario.setKeyLog("");
 						usuario.setRecuperandoPass(false);
