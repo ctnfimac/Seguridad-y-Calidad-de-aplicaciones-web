@@ -177,7 +177,6 @@ public class UsuarioDaoImpl implements UsuarioDao {
 		usuario.setFechaDeRecuperacionDePass(fechaSolicitud);
 		usuario.setKeyLog(keyLog);
 		usuario.setRecuperandoPass(true);
-
 		session.update(usuario);
 	}
 

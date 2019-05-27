@@ -118,6 +118,28 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 		return error;	
 	}
 	
+	public Integer validarPasswordUsuarioAlRegistrar(Usuario usuarioNuevo) {
+		Integer error = 0; // 0 no hay ningun error
+		if(usuarioNuevo.getPassword().isEmpty() || usuarioNuevo.getPassword2().isEmpty() ){
+			return error = 1 ; // campos icompletos
+		}else if(!usuarioNuevo.getPassword().isEmpty() && !usuarioNuevo.getPassword2().isEmpty() && 
+				!usuarioNuevo.getPassword().equals(usuarioNuevo.getPassword2())){
+			return error = 2 ; // las contraseñas son distintas
+		}else if(contraseñasNoPermitidas.contains(usuarioNuevo.getPassword()) ){
+			return error = 4 ;// contraseña dentro de la lista de no permitidas
+		}else if(usuarioNuevo.getPassword().length() < 12 || usuarioNuevo.getPassword2().length() < 12 ){
+			return error = 4 ;// contraseña dentro de la lista de no permitidas
+		}else if(usuarioNuevo.getPassword().length() < 12 || usuarioNuevo.getPassword2().length() < 12 ){
+			return error = 3 ;// la contraseña ingresada tiene menos de 12 caracteres
+		}else if(StringUtils.containsWhitespace(usuarioNuevo.getPassword()) || StringUtils.containsWhitespace(usuarioNuevo.getPassword2()) ){
+			return error = 4 ;// la contraseña contiene espacios en blanco
+		}else if(!this.ValidarCaracteres(usuarioNuevo.getPassword()) || !this.ValidarCaracteres(usuarioNuevo.getPassword2()) ) 			
+			return error = 4 ;// la contraseña contiene emogis
+
+		return error;	
+		
+	}
+	
 	@Override
 	public Integer validarPasswordUsuario(Usuario usuarioNuevo) {
 		
@@ -192,8 +214,15 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 		   
 		     } catch (MessagingException e) {e.printStackTrace();} 
 	}
+	
+	@Override
+	public Usuario GetUsuarioById(Long idUsuario) {
+		return usuarioDao.GetUsuarioById(idUsuario);
+	}
 
 	private static final List<String> contraseñasNoPermitidas = Arrays.asList("123456", "abc123");
+
+	
 	
 }
 

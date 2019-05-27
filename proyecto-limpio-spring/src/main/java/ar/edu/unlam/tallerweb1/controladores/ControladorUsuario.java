@@ -2,17 +2,9 @@ package ar.edu.unlam.tallerweb1.controladores;
 
 import java.util.Date;
 import java.util.List;
-//para el email
-import java.util.Properties;
 
 import javax.inject.Inject;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -35,6 +27,7 @@ import ar.edu.unlam.tallerweb1.servicios.ServicioUsuario;
 
 @Controller
 public class ControladorUsuario {
+
 	
 	@Inject
 	private ServicioLogin servicioLogin;
@@ -105,31 +98,31 @@ public class ControladorUsuario {
 	public ModelAndView registrarUsuario(@ModelAttribute("usuario") Usuario usuarioNuevo,HttpServletRequest request){
 		
 	    ModelMap modelo = new ModelMap();
-		
+	
 		try{	
-			if(servicioUsuario.validacionDeUsuario(usuarioNuevo)== 0 && servicioUsuario.validarPasswordUsuario(usuarioNuevo) == 0) {
+			if(servicioUsuario.validacionDeUsuario(usuarioNuevo)== 0 && servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo) == 0) {
 				usuarioNuevo.setPassword(Md5Crypt.md5Crypt(usuarioNuevo.getPassword().getBytes()));
 				servicioLogin.registrarUsuario(usuarioNuevo);
 				modelo.put("errorRegistro", 0);
 				modelo.put("msjregistro", "Se registro exitosamente, <a href='login'>inicie sesión</a>");
-			}else if(servicioUsuario.validacionDeUsuario(usuarioNuevo)==1 || servicioUsuario.validarPasswordUsuario(usuarioNuevo)==1){
+			}else if(servicioUsuario.validacionDeUsuario(usuarioNuevo)==1 || servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo)==1){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "Complete todos los campos");
-			}else if(servicioUsuario.validarPasswordUsuario(usuarioNuevo)==2){
+			}else if(servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo)==2){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "Las contraseñas son distintas");
-			}else if(servicioUsuario.validarPasswordUsuario(usuarioNuevo)==3){
+			}else if(servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo)==3){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "La contraseña tiene menos de 12 caracteres");
-			}else if(servicioUsuario.validarPasswordUsuario(usuarioNuevo)== 4){
+			}else if(servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo)== 4){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "La contraseña ingresada contiene caracteres inválidos");
 			}
 			
 		}catch(Exception e){
-			System.out.println(e.getMessage());
 			modelo.put("errorRegistro", 1);
 			modelo.put("msjregistro", "Hubo problemas para dar de alta su usuario");
+			System.out.println(e.getMessage());
 		}
 
         
@@ -172,9 +165,9 @@ public class ControladorUsuario {
 		}
 	}
 	
+
 	@RequestMapping(path="/cambiar-contrasenia", method = RequestMethod.POST)
 	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuarioLogeado ,HttpServletRequest request){
-		
 		HttpSession misession= (HttpSession) request.getSession();
 	
 		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
@@ -186,7 +179,7 @@ public class ControladorUsuario {
 			if(validacionContraseña == 0) {
 				try{
 					usuarioLogeado.setPassword(Md5Crypt.md5Crypt(usuarioLogeado.getPassword2().getBytes()));
-					servicioUsuario.cambiarContrasenia(idUsuarioLogueado/*usuarioLogeado.getId()*/, usuarioLogeado.getPassword());
+					servicioUsuario.cambiarContrasenia(idUsuarioLogueado, usuarioLogeado.getPassword());
 					modelo.put("errorCambio", 0);
 					modelo.put("msjcambio", "Se actualizo su contraseña exitosamente");
 				}catch(Exception e){
@@ -249,7 +242,6 @@ public class ControladorUsuario {
 			String idEncriptado = Md5Crypt.md5Crypt(usuarioBuscado.getId().toString().getBytes());
 			Date fechaSolicitud = new Date();
 			String keyLog = Md5Crypt.md5Crypt((usuarioBuscado.getId().toString()+ fechaSolicitud.toString()).getBytes());
-			System.out.println("keyLog original:" + keyLog);
 			String link = "http://localhost:8080/proyecto-limpio-spring/obteniendoPass?id="+idEncriptado+"&keylog="+keyLog;
 			//String msj = usuarioBuscado.getNombre() + ", este es un mensaje para recuperar tu contraseña por favor entre al siguiente enlace: <a href='christianperalta.com'>enlace</a>" ;
 			String msj = "<h3>"+ usuarioBuscado.getNombre() +", si ha solicitado recuperar su contraseña haga click en el siguiente <a href='"+link+"'>Link</a> </h3>";
@@ -283,7 +275,6 @@ public class ControladorUsuario {
 		}else if(respuesta == 1){
 			modelo.put("usuario", new Usuario());
 			modelo.put("id", id);
-			System.out.println("id a modificar:" + this.servicioUsuario.getId(id));
 			return new ModelAndView("cambiarContrasenia",modelo);
 		}else{
 			modelo.put("errorRegistro", 1);
@@ -295,7 +286,6 @@ public class ControladorUsuario {
 	
 	@RequestMapping(path="/actualizarPass", method = RequestMethod.POST)
 	public ModelAndView actualizarPass(@ModelAttribute("usuario") Usuario usuario,HttpServletRequest request){
-		System.out.println("id: " + this.servicioUsuario.getId(usuario.getIdE()));
 		Long idUsuario = this.servicioUsuario.getId(usuario.getIdE()) ;
 		if(idUsuario != 0 ) {
 			ModelMap modelo = new ModelMap();
@@ -309,6 +299,11 @@ public class ControladorUsuario {
 								//System.out.println("cambiando la pass");
 								modelo.put("errorCambio", 3);
 								modelo.put("msjcambio", "Contraseña actualizada ya puede <a href='login'>iniciar sesión</a>");
+								//enviar email al usuario con la contraseña en texto
+								/*Usuario user = servicioUsuario.GetUsuarioById(idUsuario);
+								String msj = "<h3>"+ user.getNombre() +", su nueva contraseña es <span style='color:green'>"+contraseniaNueva+"</span></h3>";
+
+								servicioUsuario.enviarEmail(user.getEmail(), msj);*/
 							}else{
 								modelo.put("errorCambio", 1);
 								modelo.put("msjcambio", "las contraseñas tienen menos de 12 caracteres");
@@ -330,7 +325,6 @@ public class ControladorUsuario {
 			}
 			modelo.put("id", usuario.getIdE());
 			modelo.put("usuario", new Usuario());
-			System.out.println("id a modificar:" + this.servicioUsuario.getId(usuario.getIdE()));
 			return new ModelAndView("cambiarContrasenia",modelo);
 		}else{
 			return new ModelAndView("redirect:login");

@@ -8,8 +8,10 @@
 	<title>Usuario</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+<!-- 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"> -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 	<link rel="stylesheet" href="css/admin.css" >
+	<script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
 	
@@ -49,7 +51,6 @@
 				</ul>
 		  
 				<div id="content-wrapper" style="background-color:#e6e6e6">
-				
 				  <div class="container-fluid">
 				  
 				  <c:if test="${not empty errorCambio && errorCambio == 0}">
@@ -133,11 +134,22 @@
 	        </button>
 	      </div>
 	      <div class="modal-body pb-3">
-	        <form:form action="cambiar-contrasenia" class="text-center px-5" method="POST" modelAttribute="usuario">
-<%-- 	        	<form:input path="id" value="${id}" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña --> --%>
+	        <form:form action="cambiar-contrasenia" id='demo-form' class="text-center px-5" method="POST" modelAttribute="usuario">
 				<form:input path="password" class="form-control mb-4" id="password" type="password" name="password" placeholder="Contraseña Actual"/> 
-				<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" /><span id="password"></span>
-				<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña">
+<%-- 				<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" /><span id="password"></span> --%>
+				<div class="input-group flex-nowrap mb-4">
+				    <form:input path="password2" class="form-control" id="password2" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" /><span id="password"></span>
+					 
+					
+					
+					<div class="input-group-prepend">
+					  <span class="input-group-text" id="eye"><i class="fas fa-eye"></i>
+					  </span>
+					</div>
+				</div>
+      				<br/>
+				<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña"> 
+	
 			</form:form>
 	      </div>
 	    </div>
@@ -148,8 +160,9 @@
 	<script src="js/bootstrap.min.js"></script>
 </body>
 <script>
+			
             function validatePassword(password) {
-                
+		
                 // Do not show anything when the length of password is zero.
                 if (password.length === 0) {
                     document.getElementById("password2").innerHTML = "";
@@ -191,5 +204,27 @@
                 document.getElementById("password2").innerHTML = strength;
                 document.getElementById("password2").style.color = color;
             }
+            
+            $(document).ready(function(){
+				$("#eye").click(function(){
+					if($("#password2").attr("type") === "password")
+						$("#password2").removeAttr("type");
+					else $("#password2").attr("type","password");
+				});
+// 				$("#eye").mousedown(function(){
+// 					$("#password2").removeAttr("type");
+// 				});
+// 				$("#eye").mouseup(function(){
+// 					$("#password2").attr("type","password");
+// 				});
+			})
         </script>
+<!--          <script src="https://www.google.com/recaptcha/api.js?render=6LeUwKUUAAAAAOHov99X7G3QkdEPw7Pfuvn5vBKl"></script> -->
+<!--   <script> -->
+//   grecaptcha.ready(function() {
+//       grecaptcha.execute('6LeUwKUUAAAAAOHov99X7G3QkdEPw7Pfuvn5vBKl', {action: 'cambiar-contrasenia'}).then(function(token) {
+//          ...
+//       });
+//   });
+<!--   </script> -->
 </html>

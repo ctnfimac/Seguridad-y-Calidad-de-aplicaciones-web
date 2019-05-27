@@ -19,4 +19,6 @@ public interface ServicioUsuario {
 	public Integer validacionDeUsuario(Usuario usuarioNuevo);
 	public void enviarEmail(String email,String msj);
 	public Integer validarPasswordUsuario(Usuario usuarioNuevo);
+	Integer validarPasswordUsuarioAlRegistrar(Usuario usuarioNuevo);
+	Usuario GetUsuarioById(Long idUsuario);
 }
