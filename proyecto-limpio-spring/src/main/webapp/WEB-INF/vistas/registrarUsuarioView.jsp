@@ -43,7 +43,7 @@
 							<form:input path="nombre" class="form-control mb-4" id="nombre" type="text" placeholder="nombre"/>
 							<div class="row">
 							    <div class="col">
-									<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Contraseña"/>
+									<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Contraseña" onkeyup="validatePassword(this.value);" /><span id="password"></span>
 							    </div>
 							    <div class="col">
 									<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Contraseña"/>     		      		  
@@ -104,4 +104,49 @@
 		<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
 		<script src="js/bootstrap.min.js" type="text/javascript"></script>
 	</body>
+	<script>
+            function validatePassword(password) {
+                
+                // Do not show anything when the length of password is zero.
+                if (password.length === 0) {
+                    document.getElementById("password").innerHTML = "";
+                    return;
+                }
+                // Create an array and push all possible values that you want in password
+                var matchedCase = new Array();
+                matchedCase.push("[$@$!%*#?&_]"); // Special Charector
+                matchedCase.push("[A-Z]");      // Uppercase Alpabates
+                matchedCase.push("[0-9]");      // Numbers
+                matchedCase.push("[a-z]");     // Lowercase Alphabates
+
+                // Check the conditions
+                var ctr = 0;
+                for (var i = 0; i < matchedCase.length; i++) {
+                    if (new RegExp(matchedCase[i]).test(password)) {
+                        ctr++;
+                    }
+                }
+                // Display it
+                var color = "";
+                var strength = "";
+                switch (ctr) {
+                    case 0:
+                    case 1:
+                    case 2:
+                        strength = "Very Weak";
+                        color = "red";
+                        break;
+                    case 3:
+                        strength = "Medium";
+                        color = "orange";
+                        break;
+                    case 4:
+                        strength = "Strong";
+                        color = "green";
+                        break;
+                }
+                document.getElementById("password").innerHTML = strength;
+                document.getElementById("password").style.color = color;
+            }
+        </script>
 </html>

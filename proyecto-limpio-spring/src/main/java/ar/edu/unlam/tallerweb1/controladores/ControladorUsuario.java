@@ -112,7 +112,7 @@ public class ControladorUsuario {
 				servicioLogin.registrarUsuario(usuarioNuevo);
 				modelo.put("errorRegistro", 0);
 				modelo.put("msjregistro", "Se registro exitosamente, <a href='login'>inicie sesión</a>");
-			}else if(servicioUsuario.validacionDeUsuario(usuarioNuevo)==1){
+			}else if(servicioUsuario.validacionDeUsuario(usuarioNuevo)==1 || servicioUsuario.validarPasswordUsuario(usuarioNuevo)==1){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "Complete todos los campos");
 			}else if(servicioUsuario.validarPasswordUsuario(usuarioNuevo)==2){

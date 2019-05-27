@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.vdurmont.emoji.EmojiParser;
+
 import ar.edu.unlam.tallerweb1.dao.AdminDao;
 import ar.edu.unlam.tallerweb1.dao.LogDao;
 import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
@@ -121,18 +123,18 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 		Integer error = 0; // 0 no hay ningun error
 		
 		if(usuarioNuevo.getPassword().isEmpty() || usuarioNuevo.getPassword2().isEmpty() ){
-			error = 1 ; // campos icompletos
+			return error = 1 ; // campos icompletos
 		}else if(!usuarioNuevo.getPassword().isEmpty() && !usuarioNuevo.getPassword2().isEmpty() && 
 				!usuarioNuevo.getPassword().equals(usuarioNuevo.getPassword2())){
-			error = 2 ; // las contraseñas son distintas
+			return error = 2 ; // las contraseñas son distintas
 		}else if(contraseñasNoPermitidas.contains(usuarioNuevo.getPassword()) ){
-			error = 4 ;// contraseña dentro de la lista de no permitidas
+			return error = 4 ;// contraseña dentro de la lista de no permitidas
 		}else if(usuarioNuevo.getPassword().length() < 12 || usuarioNuevo.getPassword2().length() < 12 ){
-			error = 3 ;// la contraseña ingresada tiene menos de 12 caracteres
+			return error = 3 ;// la contraseña ingresada tiene menos de 12 caracteres
 		}else if(StringUtils.containsWhitespace(usuarioNuevo.getPassword()) || StringUtils.containsWhitespace(usuarioNuevo.getPassword2()) ){
-			error = 4 ;// la contraseña contiene espacios en blanco
+			return error = 4 ;// la contraseña contiene espacios en blanco
 		}else if(!this.ValidarCaracteres(usuarioNuevo.getPassword()) || !this.ValidarCaracteres(usuarioNuevo.getPassword2()) ) 			
-			error = 4 ;// la contraseña contiene emogis
+			return error = 4 ;// la contraseña contiene emogis
 		
 		return error;	
 	}
@@ -141,14 +143,13 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 		
 		Pattern letter = Pattern.compile("[a-zA-z]");  
 		Pattern digit = Pattern.compile("[0-9]");
-		Pattern special = Pattern.compile ("[!@#$%&*()_+=|<>?{}\\[\\]~-]");  
 		
 		Matcher hasLetter = letter.matcher(password);  
-		Matcher hasDigit = digit.matcher(password); 
-		Matcher hasSpecial = special.matcher(password);
+	    Matcher hasDigit = digit.matcher(password); 
+	    
 		
-		boolean result =  (hasLetter.find() || hasDigit.find()) && !hasSpecial.find();
-		
+		boolean result =  (hasLetter.find() || hasDigit.find()) && !EmojiUtils.containsEmoji(password);
+			
 		return result;
 	};
 	
@@ -187,7 +188,9 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 		   
 		     } catch (MessagingException e) {e.printStackTrace();} 
 	}
-	
-	private static final List<String> contraseñasNoPermitidas = Arrays.asList("123456", "abc123");
 
+	private static final List<String> contraseñasNoPermitidas = Arrays.asList("123456", "abc123");
+	
 }
+
+

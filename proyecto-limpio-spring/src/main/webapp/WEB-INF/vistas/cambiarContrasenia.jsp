@@ -40,7 +40,7 @@
 						  
 							 <form:form action="actualizarPass" class="text-center px-5" method="POST" modelAttribute="usuario">
 					        	<form:input path="idE" value="${id}" class="form-control mb-4" type="hidden" /> 
-								<form:input path="password" class="form-control mb-4" id="password" type="password" placeholder="Contraseña Nueva"/>
+								<form:input path="password" class="form-control mb-4" id="password" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" /><span id="password"></span>
 								<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Repetir nueva Contraseña"/>
 								<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña">
 							 </form:form>
@@ -74,4 +74,49 @@
 		<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
 		<script src="js/bootstrap.min.js" type="text/javascript"></script>
 	</body>
+	<script>
+            function validatePassword(password) {
+                
+                // Do not show anything when the length of password is zero.
+                if (password.length === 0) {
+                    document.getElementById("password").innerHTML = "";
+                    return;
+                }
+                // Create an array and push all possible values that you want in password
+                var matchedCase = new Array();
+                matchedCase.push("[$@$!%*#?&_]"); // Special Charector
+                matchedCase.push("[A-Z]");      // Uppercase Alpabates
+                matchedCase.push("[0-9]");      // Numbers
+                matchedCase.push("[a-z]");     // Lowercase Alphabates
+
+                // Check the conditions
+                var ctr = 0;
+                for (var i = 0; i < matchedCase.length; i++) {
+                    if (new RegExp(matchedCase[i]).test(password)) {
+                        ctr++;
+                    }
+                }
+                // Display it
+                var color = "";
+                var strength = "";
+                switch (ctr) {
+                    case 0:
+                    case 1:
+                    case 2:
+                        strength = "Very Weak";
+                        color = "red";
+                        break;
+                    case 3:
+                        strength = "Medium";
+                        color = "orange";
+                        break;
+                    case 4:
+                        strength = "Strong";
+                        color = "green";
+                        break;
+                }
+                document.getElementById("password").innerHTML = strength;
+                document.getElementById("password").style.color = color;
+            }
+        </script>
 </html>

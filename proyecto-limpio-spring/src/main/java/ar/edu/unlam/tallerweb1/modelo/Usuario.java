@@ -14,34 +14,38 @@ public class Usuario {
 	@Id
 	@GeneratedValue
 	private Long id;
-	
+
 	@Transient
 	private String idE;
-	
+
 	@Column(unique = true)
 	private String email;
 	private String nombre;
-	
+
 	private String password;
 	@Transient
 	private String password2;
-	private String rol = "user";	   // user - admin
+	private String rol = "user"; // user - admin
 	private Boolean habilitado = true; // true: habilitado, false: deshabilitado
 	private Date fechaAltaDeUsuario;
 	private Date fechaUltimaModificacion;
-	
-	private String keyLog; // condigo de hash el cual se guarda al enviar el email para recuperar contraseña
-	private Date fechaDeRecuperacionDePass; // se pone la fecha y hora actual al momento de realizar la peticion de recuperar contraseña
-	private Boolean recuperandoPass = false; // flag para garantizar que solo se realiza una vez el cambio de contraseña con el link enviado
-	
-	public Usuario(){}
-	
+
+	private String keyLog; // condigo de hash el cual se guarda al enviar el email para recuperar
+							// contraseña
+	private Date fechaDeRecuperacionDePass; // se pone la fecha y hora actual al momento de realizar la peticion de
+											// recuperar contraseña
+	private Boolean recuperandoPass = false; // flag para garantizar que solo se realiza una vez el cambio de contraseña
+												// con el link enviado
+
+	public Usuario() {
+	}
+
 	public Usuario(String email, String password, String rol) {
 		this.email = email;
 		this.password = password;
 		this.rol = rol;
 	}
-	
+
 	public Usuario(String email, String nombre, String password, String rol, Date fechaAltaDeUsuario) {
 		this.email = email;
 		this.nombre = nombre;
@@ -53,10 +57,11 @@ public class Usuario {
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public String getIdE() {
 		return idE;
 	}
@@ -68,13 +73,15 @@ public class Usuario {
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getPassword() {
 		return password;
 	}
-	
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -86,7 +93,7 @@ public class Usuario {
 	public void setPassword2(String password2) {
 		this.password2 = password2;
 	}
-	
+
 	public String getRol() {
 		return rol;
 	}
@@ -110,7 +117,7 @@ public class Usuario {
 	public void setHabilitado(Boolean habilitado) {
 		this.habilitado = habilitado;
 	}
-	
+
 	public Date getFechaAltaDeUsuario() {
 		return fechaAltaDeUsuario;
 	}
@@ -154,6 +161,5 @@ public class Usuario {
 	public void setFechaUltimaModificacion(Date fechaUltimaModificacion) {
 		this.fechaUltimaModificacion = fechaUltimaModificacion;
 	}
-	
-	
+
 }
