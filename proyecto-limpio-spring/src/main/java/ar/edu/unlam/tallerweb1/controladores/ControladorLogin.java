@@ -12,17 +12,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
+import ar.edu.unlam.tallerweb1.servicios.ServicioAdmin;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
+import ar.edu.unlam.tallerweb1.servicios.ServicioUsuario;
 
 @Controller
 public class ControladorLogin {
 
+	private int cantIntentoIngreso = 0;
+	
 	// La anotacion @Inject indica a Spring que en este atributo se debe setear (inyeccion de dependencias)
 	// un objeto de una clase que implemente la interface ServicioLogin, dicha clase debe estar anotada como
 	// @Service o @Repository y debe estar en un paquete de los indicados en applicationContext.xml
 	@Inject
 	private ServicioLogin servicioLogin;
-	
+	@Inject
+	private ServicioUsuario servicioUsuario;
+	@Inject
+	private ServicioAdmin servicioAdmin;
 	/*
 	@Inject
 	private ServicioCache cacheManager;
@@ -46,19 +53,16 @@ public class ControladorLogin {
 	// tag form:form
 	@RequestMapping(path = "/validar-login", method = RequestMethod.POST)
 	public ModelAndView validarLogin(@ModelAttribute("usuario") Usuario usuario, HttpServletRequest request) {
-		ModelMap model = new ModelMap();
-
-		// invoca el metodo consultarUsuario del servicio y hace un redirect a la URL /home, esto es, en lugar de enviar a una vista
-		// hace una llamada a otro action a través de la URL correspondiente a ésta
-		Usuario usuarioBuscado = servicioLogin.consultarUsuario(usuario);
+		ModelMap model = new ModelMap();		
+		Usuario usuarioBuscado = servicioLogin.consultarUsuario(usuario);		
 		if (usuarioBuscado != null) {
+			
+			this.cantIntentoIngreso = 0;
+			
 			request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
 			request.getSession().setAttribute("sessionId", usuarioBuscado.getId());
 			request.getSession().setAttribute("sessionNombre", usuarioBuscado.getNombre());
-			/*
-			cacheManager.getInstance();
-			cacheManager.put("loggedUser", usuarioBuscado.getId());
-			*/
+
 			Long id = usuarioBuscado.getId();
 			servicioLogin.saveLogIngreso(id);
 			
@@ -75,10 +79,27 @@ public class ControladorLogin {
 				}
 			}
 			
-		} else {
-			// si el usuario no existe agrega un mensaje de error en el modelo.
-			model.put("error", "Usuario o clave incorrecta");
+		} else 
+		{	
+			Usuario usuarioIntento = servicioUsuario.getUsuarioByEmail(usuario.getEmail());	
+			
+			if(usuarioIntento != null) {
+				if(cantIntentoIngreso <= 3) {		
+					Usuario user = servicioLogin.consultarUsuario(usuario);				
+					if(user == null) {
+						model.put("error", "Usuario o clave incorrecta");
+						this.cantIntentoIngreso ++;
+					}				
+				}else {
+					
+					servicioAdmin.cambiarEstadoUsuario(usuarioIntento.getId(), false);
+					this.cantIntentoIngreso = 0;
+					model.put("error", "Su usuario ha sido deshabilitado. Comuniquese con el Administrador");
+					return new ModelAndView("login", model);	
+				}
+			}
 		}
+
 		return new ModelAndView("login", model);
 	}
 

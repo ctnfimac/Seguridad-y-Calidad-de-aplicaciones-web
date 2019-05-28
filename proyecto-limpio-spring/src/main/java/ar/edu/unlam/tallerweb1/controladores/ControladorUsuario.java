@@ -98,23 +98,29 @@ public class ControladorUsuario {
 	public ModelAndView registrarUsuario(@ModelAttribute("usuario") Usuario usuarioNuevo,HttpServletRequest request){
 		
 	    ModelMap modelo = new ModelMap();
+	    
+	    Integer validacionUsuario = servicioUsuario.validacionDeUsuario(usuarioNuevo);
+	    Integer validacionPassword = servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo);
 	
 		try{	
-			if(servicioUsuario.validacionDeUsuario(usuarioNuevo)== 0 && servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo) == 0) {
+			if(validacionUsuario == 0 && validacionPassword == 0) {
 				usuarioNuevo.setPassword(Md5Crypt.md5Crypt(usuarioNuevo.getPassword().getBytes()));
 				servicioLogin.registrarUsuario(usuarioNuevo);
 				modelo.put("errorRegistro", 0);
 				modelo.put("msjregistro", "Se registro exitosamente, <a href='login'>inicie sesión</a>");
-			}else if(servicioUsuario.validacionDeUsuario(usuarioNuevo)==1 || servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo)==1){
+			}else if(validacionUsuario == 1 || validacionPassword == 1){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "Complete todos los campos");
-			}else if(servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo)==2){
+			}else if(validacionUsuario == 5){
+				modelo.put("errorRegistro", 1);
+				modelo.put("msjregistro", "El usuario ingresado no se encuentra disponible");
+			}else if(validacionPassword == 2){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "Las contraseñas son distintas");
-			}else if(servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo)==3){
+			}else if(validacionPassword == 3){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "La contraseña tiene menos de 12 caracteres");
-			}else if(servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo)== 4){
+			}else if(validacionPassword == 4){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "La contraseña ingresada contiene caracteres inválidos");
 			}

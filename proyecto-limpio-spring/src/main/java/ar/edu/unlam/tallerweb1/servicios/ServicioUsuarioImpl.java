@@ -21,12 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.vdurmont.emoji.EmojiParser;
-
-import ar.edu.unlam.tallerweb1.dao.AdminDao;
-import ar.edu.unlam.tallerweb1.dao.LogDao;
 import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
-import ar.edu.unlam.tallerweb1.modelo.Funcionalidad;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
 @Service("servicioUsuario")
@@ -38,6 +33,9 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	@Inject
 	private ServicioLog servicioLog;
 
+	private static final List<String> contraseniasNoPermitidas = Arrays.asList("123456", "abc123","usuario123456","admin","root","admin123456");
+	private static final List<String> emailsNoPermitidos = Arrays.asList("admin", "admin@admin.com", "christian_estel87@hotmail.com","usuario2@usuario2.com","usuario3@usuario3.com");
+	
 	@Override
 	public void cambiarContrasenia(Long idUsuario, String contrasenia) {
 		
@@ -109,72 +107,72 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	@Override
 	public Integer validacionDeUsuario(Usuario usuarioNuevo) {
 		
-		Integer error = 0; // 0 no hay ningun error
-		
 		if(usuarioNuevo.getEmail().isEmpty() || usuarioNuevo.getNombre().isEmpty()){
-			error = 1 ; // los campos estan vacios
+			return 1 ; // los campos estan vacios
+		}else if(emailsNoPermitidos.contains(usuarioNuevo.getEmail())){
+			return 5 ;// usuario dentro de la lista de no permitidos
 		}
 		
-		return error;	
+		return 0;	
 	}
 	
 	public Integer validarPasswordUsuarioAlRegistrar(Usuario usuarioNuevo) {
-		Integer error = 0; // 0 no hay ningun error
+		
 		if(usuarioNuevo.getPassword().isEmpty() || usuarioNuevo.getPassword2().isEmpty() ){
-			return error = 1 ; // campos icompletos
+			return 1 ; // campos icompletos
 		}else if(!usuarioNuevo.getPassword().isEmpty() && !usuarioNuevo.getPassword2().isEmpty() && 
 				!usuarioNuevo.getPassword().equals(usuarioNuevo.getPassword2())){
-			return error = 2 ; // las contraseñas son distintas
-		}else if(contraseñasNoPermitidas.contains(usuarioNuevo.getPassword()) ){
-			return error = 4 ;// contraseña dentro de la lista de no permitidas
+			return 2 ; // las contraseñas son distintas
+		}else if(contraseniasNoPermitidas.contains(usuarioNuevo.getPassword())
+				&& contraseniasNoPermitidas.contains(usuarioNuevo.getPassword2())){
+			return 4 ;// contraseña dentro de la lista de no permitidas
 		}else if(usuarioNuevo.getPassword().length() < 12 || usuarioNuevo.getPassword2().length() < 12 ){
-			return error = 4 ;// contraseña dentro de la lista de no permitidas
+			return 4 ;// contraseña dentro de la lista de no permitidas
 		}else if(usuarioNuevo.getPassword().length() < 12 || usuarioNuevo.getPassword2().length() < 12 ){
-			return error = 3 ;// la contraseña ingresada tiene menos de 12 caracteres
+			return 3 ;// la contraseña ingresada tiene menos de 12 caracteres
 		}else if(StringUtils.containsWhitespace(usuarioNuevo.getPassword()) || StringUtils.containsWhitespace(usuarioNuevo.getPassword2()) ){
-			return error = 4 ;// la contraseña contiene espacios en blanco
+			return 4 ;// la contraseña contiene espacios en blanco
 		}else if(!this.ValidarCaracteres(usuarioNuevo.getPassword()) || !this.ValidarCaracteres(usuarioNuevo.getPassword2()) ) 			
-			return error = 4 ;// la contraseña contiene emogis
+			return 4 ;// la contraseña contiene emogis
 
-		return error;	
+		return 0;	
 		
 	}
 	
 	@Override
 	public Integer validarPasswordUsuario(Usuario usuarioNuevo) {
 		
-		Integer error = 0; // 0 no hay ningun error
-		
 		String contraseniaActualAlmacenada = usuarioDao.getPassById(usuarioNuevo.getId());
 		String encrypted2 = Md5Crypt.md5Crypt(usuarioNuevo.getPassword().getBytes(), contraseniaActualAlmacenada);
 		
 		if(usuarioNuevo.getPassword().isEmpty() || usuarioNuevo.getPassword2().isEmpty() ){
-			return error = 1 ; // campos icompletos
+			return 1 ; // campos icompletos
 		}else if(!contraseniaActualAlmacenada.equals(encrypted2)){
-			return error = 2 ; // las contraseña actual en el usuario no coindide con 
+			return 2 ; // las contraseña actual en el usuario no coindide con 
 							   // la contraseña actual ingresada en el formulario
-		}else if(contraseñasNoPermitidas.contains(usuarioNuevo.getPassword2()) ){
-			return error = 4 ;// contraseña dentro de la lista de no permitidas
+		}else if(contraseniasNoPermitidas.contains(usuarioNuevo.getPassword2()) ){
+			return 4 ;// contraseña dentro de la lista de no permitidas
 		}else if(usuarioNuevo.getPassword2().length() < 12 ){
-			return error = 3 ;// la contraseña ingresada tiene menos de 12 caracteres
+			return 3 ;// la contraseña ingresada tiene menos de 12 caracteres
 		}else if(StringUtils.containsWhitespace(usuarioNuevo.getPassword2()) ){
-			return error = 4 ;// la contraseña contiene espacios en blanco
+			return 4 ;// la contraseña contiene espacios en blanco
 		}else if(!this.ValidarCaracteres(usuarioNuevo.getPassword2()) ) 			
-			return error = 4 ;// la contraseña contiene emogis
+			return 4 ;// la contraseña contiene emogis
 		
-		return error;	
+		return 0;	
 	}
 	
 	private boolean ValidarCaracteres(String password) {
 		
 		Pattern letter = Pattern.compile("[a-zA-z]");  
 		Pattern digit = Pattern.compile("[0-9]");
+		Pattern caracteresPermitidos = Pattern.compile("[$@$!%*#?&_]");
 		
 		Matcher hasLetter = letter.matcher(password);  
 	    Matcher hasDigit = digit.matcher(password); 
-	    
-		
-		boolean result =  (hasLetter.find() || hasDigit.find()) && !EmojiUtils.containsEmoji(password);
+	    Matcher hasCaracteresPermitidos = caracteresPermitidos.matcher(password); 
+	    		
+		boolean result = hasLetter.find() && hasDigit.find() && hasCaracteresPermitidos.find() && !EmojiUtils.containsEmoji(password);
 			
 		return result;
 	};
@@ -220,10 +218,6 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 		return usuarioDao.GetUsuarioById(idUsuario);
 	}
 
-	private static final List<String> contraseñasNoPermitidas = Arrays.asList("123456", "abc123");
-
-	
-	
 }
 
 

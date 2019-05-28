@@ -43,10 +43,10 @@
 							<form:input path="nombre" class="form-control mb-4" id="nombre" type="text" placeholder="nombre"/>
 							<div class="row">
 							    <div class="col">
-									<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Contraseña" onkeyup="validatePassword(this.value);" /><span id="password"></span>
+									<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Contraseña" onkeyup="validatePassword(this.value);" />
 							    </div>
 							    <div class="col">
-									<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Contraseña"/>     		      		  
+									<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Contraseña" onkeyup="validatePassword(this.value);" /> 		      		  
 							    </div>
 							 </div>
 							<button class="btn btn-lg btn-success btn-block" Type="Submit"/>Registrar</button>
@@ -114,10 +114,10 @@
                 }
                 // Create an array and push all possible values that you want in password
                 var matchedCase = new Array();
-                matchedCase.push("[$@$!%*#?&_]"); // Special Charector
                 matchedCase.push("[A-Z]");      // Uppercase Alpabates
-                matchedCase.push("[0-9]");      // Numbers
                 matchedCase.push("[a-z]");     // Lowercase Alphabates
+                matchedCase.push("[0-9]");      // Numbers
+                matchedCase.push("[$@$!%*#?&_]"); // Special Charector
 
                 // Check the conditions
                 var ctr = 0;
