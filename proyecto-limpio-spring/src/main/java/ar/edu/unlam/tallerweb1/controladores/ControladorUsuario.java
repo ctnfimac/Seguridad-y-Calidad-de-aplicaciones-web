@@ -104,7 +104,6 @@ public class ControladorUsuario {
 	
 		try{	
 			if(validacionUsuario == 0 && validacionPassword == 0) {
-				usuarioNuevo.setPassword(Md5Crypt.md5Crypt(usuarioNuevo.getPassword().getBytes()));
 				servicioLogin.registrarUsuario(usuarioNuevo);
 				modelo.put("errorRegistro", 0);
 				modelo.put("msjregistro", "Se registro exitosamente, <a href='login'>inicie sesión</a>");
@@ -184,7 +183,7 @@ public class ControladorUsuario {
 					
 			if(validacionContraseña == 0) {
 				try{
-					usuarioLogeado.setPassword(Md5Crypt.md5Crypt(usuarioLogeado.getPassword2().getBytes()));
+					usuarioLogeado.setPassword(usuarioLogeado.getPassword2());
 					servicioUsuario.cambiarContrasenia(idUsuarioLogueado, usuarioLogeado.getPassword());
 					modelo.put("errorCambio", 0);
 					modelo.put("msjcambio", "Se actualizo su contraseña exitosamente");

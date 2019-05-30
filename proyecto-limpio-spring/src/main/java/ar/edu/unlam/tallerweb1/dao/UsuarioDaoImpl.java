@@ -39,7 +39,12 @@ public class UsuarioDaoImpl implements UsuarioDao {
 		
 		if(usuarioExistente != null){
 			String encrypted2 = Md5Crypt.md5Crypt(usuario.getPassword().getBytes(), usuarioExistente.getPassword());
-			if(usuarioExistente.getPassword().equals(encrypted2)) resultado = usuarioExistente;
+			
+			String salt = usuario.getPassword().substring(usuario.getPassword().length() - 4);
+			String encryptedSalt2 = Md5Crypt.md5Crypt(salt.getBytes(), usuarioExistente.getSalt());
+			
+			if(usuarioExistente.getPassword().equals(encrypted2) && usuarioExistente.getSalt().equals(encryptedSalt2)) 
+				resultado = usuarioExistente;
 		}
 
 		return resultado;
@@ -62,10 +67,10 @@ public class UsuarioDaoImpl implements UsuarioDao {
 			Funcionalidad verActividadPersonal = new Funcionalidad("Ver Historial de actividad");
 			Funcionalidad verActividadUsuarios = new Funcionalidad("Ver Historial de usuarios");
 			
-			Usuario usuario1 = new Usuario("admin@admin.com", Md5Crypt.md5Crypt("admin123456".getBytes()), "admin");
-			Usuario usuario2 = new Usuario("christian_estel87@hotmail.com", Md5Crypt.md5Crypt("123456".getBytes()), "user");
-			Usuario usuario3 = new Usuario("usuario2@usuario2.com", Md5Crypt.md5Crypt("usuario123456".getBytes()), "user");
-			Usuario usuario4 = new Usuario("usuario3@usuario3.com", Md5Crypt.md5Crypt("usuario123456".getBytes()), "user");
+			Usuario usuario1 = new Usuario("admin@admin.com", Md5Crypt.md5Crypt("admin123456".getBytes()), Md5Crypt.md5Crypt("3456".getBytes()), "admin");
+			Usuario usuario2 = new Usuario("christian_estel87@hotmail.com", Md5Crypt.md5Crypt("123456".getBytes()), Md5Crypt.md5Crypt("3456".getBytes()), "user");
+			Usuario usuario3 = new Usuario("usuario2@usuario2.com", Md5Crypt.md5Crypt("usuario123456".getBytes()), Md5Crypt.md5Crypt("3456".getBytes()), "user");
+			Usuario usuario4 = new Usuario("usuario3@usuario3.com", Md5Crypt.md5Crypt("usuario123456".getBytes()), Md5Crypt.md5Crypt("3456".getBytes()), "user");
 			usuario1.setNombre("admin");
 			usuario2.setNombre("Homero");
 			usuario3.setNombre("usuario2");
@@ -99,6 +104,10 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	public void registrarUsuario(Usuario usuario) {
 		final Session session = sessionFactory.getCurrentSession();
 		usuario.setFechaAltaDeUsuario(new Date());
+		
+		String salt = usuario.getPassword().substring(usuario.getPassword().length() - 4);
+		usuario.setPassword(Md5Crypt.md5Crypt(usuario.getPassword().getBytes()));
+		usuario.setSalt(Md5Crypt.md5Crypt(salt.getBytes()));	
 		session.save(usuario);
 	}
 
@@ -123,12 +132,14 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	}
 
 	@Override
-	public void cambiarContrasenia(Long idUsuario, String contrasenia) {
+	public void cambiarContrasenia(Long idUsuario, String contrasenia, String salt) {
 		
 		final Session session = sessionFactory.getCurrentSession();
 
 	     Usuario user = (Usuario)session.get(Usuario.class, idUsuario); 
 	     user.setPassword(contrasenia);
+	     user.setSalt(salt);
+	     
 	     session.update(user); 
 	}
 

@@ -23,6 +23,7 @@ public class Usuario {
 	private String nombre;
 
 	private String password;
+	private String salt;
 	@Transient
 	private String password2;
 	private String rol = "user"; // user - admin
@@ -40,16 +41,18 @@ public class Usuario {
 	public Usuario() {
 	}
 
-	public Usuario(String email, String password, String rol) {
+	public Usuario(String email, String password, String salt, String rol) {
 		this.email = email;
 		this.password = password;
+		this.salt = salt;
 		this.rol = rol;
 	}
 
-	public Usuario(String email, String nombre, String password, String rol, Date fechaAltaDeUsuario) {
+	public Usuario(String email, String nombre, String password, String salt, String rol, Date fechaAltaDeUsuario) {
 		this.email = email;
 		this.nombre = nombre;
 		this.password = password;
+		this.salt = salt;
 		this.rol = rol;
 		this.fechaAltaDeUsuario = fechaAltaDeUsuario;
 	}
@@ -160,6 +163,14 @@ public class Usuario {
 
 	public void setFechaUltimaModificacion(Date fechaUltimaModificacion) {
 		this.fechaUltimaModificacion = fechaUltimaModificacion;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
 	}
 
 }

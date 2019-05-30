@@ -13,7 +13,7 @@ public interface UsuarioDao {
 	void registrarUsuario(Usuario usuario);
 	List<Usuario> obtenerUsuarios();
 	Usuario GetUsuarioById(Long idUsuario);
-	void cambiarContrasenia(Long idUsuario, String contrasenia);
+	void cambiarContrasenia(Long idUsuario, String contrasenia, String salt);
 	Boolean getHabilitado(Long id);
 	Usuario getUsuarioByEmail(String email);
 	String getPassById(Long id);

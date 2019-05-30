@@ -39,7 +39,11 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	@Override
 	public void cambiarContrasenia(Long idUsuario, String contrasenia) {
 		
-		usuarioDao.cambiarContrasenia(idUsuario, contrasenia);	
+		String contraseniaEncrypt = Md5Crypt.md5Crypt(contrasenia.getBytes());
+		String salt = contrasenia.substring(contrasenia.length() - 4);
+		String saltEncryp = Md5Crypt.md5Crypt(salt.getBytes());
+		
+		usuarioDao.cambiarContrasenia(idUsuario, contraseniaEncrypt, saltEncryp);	
 		
 		String funcionalidad = "Cambio de contraseña";
 		
@@ -56,9 +60,11 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 		
 		if(usuario != null) {
 			
-			String nuevaContrasenia = "123456";
+			String nuevaContrasenia = Md5Crypt.md5Crypt("123456".getBytes());
+			String salt = nuevaContrasenia.substring(nuevaContrasenia.length() - 4);
+			String saltEncryp = Md5Crypt.md5Crypt(salt.getBytes());
 			
-			usuarioDao.cambiarContrasenia(idUsuario, nuevaContrasenia);
+			usuarioDao.cambiarContrasenia(idUsuario, nuevaContrasenia, saltEncryp);
 			
 			String funcionalidad = "Recupero de contraseña";
 			
