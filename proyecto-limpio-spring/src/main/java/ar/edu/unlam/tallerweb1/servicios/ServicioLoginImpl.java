@@ -61,6 +61,16 @@ public class ServicioLoginImpl implements ServicioLogin {
 		
 		servicioLog.guardarLog(idUsuario, "Login", mensajeLog );	
 	}
+	
+	@Override
+	public void saveLogIntentoIngreso(String mensaje) {
+		
+		Usuario admin = servicioUsuarioDao.getUsuarioByEmail("admin@admin.com");
+		String mensajeLog;
+		mensajeLog = String.format(mensaje, Long.toString(admin.getId()));
+		
+		servicioLog.guardarLog(admin.getId(), "Login", mensajeLog );	
+	}
 
 	@Override
 	public void cerrarLogSession(Long idUsuario) {

@@ -75,6 +75,7 @@ public class ControladorLogin {
 				}
 				else {
 					model.put("error", "Su usuario se encuentra deshabilitado. Comuniquese con el Administrador");
+					servicioLogin.saveLogIntentoIngreso("Intento Ingreso: Usuario Deshabilitado.");
 					return new ModelAndView("login", model);	
 				}
 			}
@@ -88,6 +89,7 @@ public class ControladorLogin {
 					Usuario user = servicioLogin.consultarUsuario(usuario);				
 					if(user == null) {
 						model.put("error", "Usuario o clave incorrecta");
+						servicioLogin.saveLogIntentoIngreso("Intento de Ingreso: usuario o contraseña incorrecta.");
 						this.cantIntentoIngreso ++;
 					}				
 				}else {
@@ -95,6 +97,7 @@ public class ControladorLogin {
 					servicioAdmin.cambiarEstadoUsuario(usuarioIntento.getId(), false);
 					this.cantIntentoIngreso = 0;
 					model.put("error", "Su usuario ha sido deshabilitado. Comuniquese con el Administrador");
+					servicioLogin.saveLogIntentoIngreso("Intento Ingreso: Maximo de intentos superado.");//maximo de intentos de ingreso superado
 					return new ModelAndView("login", model);	
 				}
 			}

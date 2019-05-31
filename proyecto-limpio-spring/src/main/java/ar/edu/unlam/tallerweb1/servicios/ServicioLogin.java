@@ -14,4 +14,5 @@ public interface ServicioLogin {
 	void saveLogIngreso(Long idUsuario);
 	void cerrarLogSession(Long idUsuario);
 	void recuperarContraseniaLog(Long idUsuario) ;
+	void saveLogIntentoIngreso(String string);
 }
