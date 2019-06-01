@@ -7,6 +7,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Usuario</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 <!-- 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"> -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
@@ -137,17 +138,15 @@
 	        <form:form action="cambiar-contrasenia" id='demo-form' class="text-center px-5" method="POST" modelAttribute="usuario">
 				<form:input path="password" class="form-control mb-4" id="password" type="password" name="password" placeholder="Contraseña Actual"/> 
 <%-- 				<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" /><span id="password"></span> --%>
-				<div class="input-group flex-nowrap mb-4">
+				   <div class="input-group flex-nowrap mb-4">
 				    <form:input path="password2" class="form-control" id="password2" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" /><span id="password"></span>
-					 
-					
-					
 					<div class="input-group-prepend">
 					  <span class="input-group-text" id="eye"><i class="fas fa-eye"></i>
 					  </span>
 					</div>
 				</div>
-      				<br/>
+				<div class="g-recaptcha" data-sitekey="6LeUwKUUAAAAAOHov99X7G3QkdEPw7Pfuvn5vBKl"></div>
+      			<br/>
 				<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña"> 
 	
 			</form:form>
@@ -206,25 +205,17 @@
             }
             
             $(document).ready(function(){
-				$("#eye").click(function(){
-					if($("#password2").attr("type") === "password")
-						$("#password2").removeAttr("type");
-					else $("#password2").attr("type","password");
+// 				$("#eye").click(function(){
+// 					if($("#password2").attr("type") === "password")
+// 						$("#password2").removeAttr("type");
+// 					else $("#password2").attr("type","password");
+// 				});
+				$("#eye").mousedown(function(){
+					$("#password2").removeAttr("type");
 				});
-// 				$("#eye").mousedown(function(){
-// 					$("#password2").removeAttr("type");
-// 				});
-// 				$("#eye").mouseup(function(){
-// 					$("#password2").attr("type","password");
-// 				});
+				$("#eye").mouseup(function(){
+					$("#password2").attr("type","password");
+				});
 			})
         </script>
-<!--          <script src="https://www.google.com/recaptcha/api.js?render=6LeUwKUUAAAAAOHov99X7G3QkdEPw7Pfuvn5vBKl"></script> -->
-<!--   <script> -->
-//   grecaptcha.ready(function() {
-//       grecaptcha.execute('6LeUwKUUAAAAAOHov99X7G3QkdEPw7Pfuvn5vBKl', {action: 'cambiar-contrasenia'}).then(function(token) {
-//          ...
-//       });
-//   });
-<!--   </script> -->
 </html>

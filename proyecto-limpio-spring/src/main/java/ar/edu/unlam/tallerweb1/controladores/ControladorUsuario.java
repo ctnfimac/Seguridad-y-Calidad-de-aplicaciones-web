@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.unlam.tallerweb1.modelo.Log;
 import ar.edu.unlam.tallerweb1.modelo.Nota;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
+import ar.edu.unlam.tallerweb1.servicios.ServicioCaptcha;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLog;
 import ar.edu.unlam.tallerweb1.servicios.ServicioLogin;
 import ar.edu.unlam.tallerweb1.servicios.ServicioNota;
@@ -180,39 +181,51 @@ public class ControladorUsuario {
 			ModelMap modelo = new ModelMap();
 			usuarioLogeado.setId(idUsuarioLogueado);
 			Integer validacionContraseña = servicioUsuario.validarPasswordUsuario(usuarioLogeado);
-					
-			if(validacionContraseña == 0) {
-				try{
-					usuarioLogeado.setPassword(usuarioLogeado.getPassword2());
-					servicioUsuario.cambiarContrasenia(idUsuarioLogueado, usuarioLogeado.getPassword());
-					modelo.put("errorCambio", 0);
-					modelo.put("msjcambio", "Se actualizo su contraseña exitosamente");
-				}catch(Exception e){
-					modelo.put("errorCambio", 1);
-					modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
-				}
-			}else if(validacionContraseña == 1){
+			
+			String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+			boolean verificaCaptcha = ServicioCaptcha.verify("6LeUwKUUAAAAANonvOMzybP_z_rJukkVktfN6wE8", gRecaptchaResponse);
+			if (verificaCaptcha) {
+					if(validacionContraseña == 0) {
+						try{
+							usuarioLogeado.setPassword(usuarioLogeado.getPassword2());
+							servicioUsuario.cambiarContrasenia(idUsuarioLogueado, usuarioLogeado.getPassword());
+							modelo.put("errorCambio", 0);
+							modelo.put("msjcambio", "Se actualizo su contraseña exitosamente");
+						}catch(Exception e){
+							modelo.put("errorCambio", 1);
+							modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
+						}
+					}else if(validacionContraseña == 1){
+						modelo.put("errorCambio", 1);
+						modelo.put("msjcambio", "Complete todos los campos");
+					}else if(validacionContraseña == 2){
+						modelo.put("errorCambio", 1);
+						modelo.put("msjcambio", "contraseña actual incorrecta");
+					}else if(validacionContraseña == 3){
+						modelo.put("errorCambio", 1);
+						modelo.put("msjcambio", "La contraseña tiene menos de 12 caracteres");
+					}else if(validacionContraseña == 4){
+						modelo.put("errorCambio", 1);
+						modelo.put("msjcambio", "La contraseña ingresada contiene caracteres inválidos");
+					}
+						List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
+						modelo.put("notas", notasUsuario);
+						modelo.put("nombre",misession.getAttribute("sessionNombre"));
+						modelo.put("nota", new Nota());
+						
+						return new ModelAndView("usuario",modelo);
+			}else{
 				modelo.put("errorCambio", 1);
-				modelo.put("msjcambio", "Complete todos los campos");
-			}else if(validacionContraseña == 2){
-				modelo.put("errorCambio", 1);
-				modelo.put("msjcambio", "contraseña actual incorrecta");
-			}else if(validacionContraseña == 3){
-				modelo.put("errorCambio", 1);
-				modelo.put("msjcambio", "La contraseña tiene menos de 12 caracteres");
-			}else if(validacionContraseña == 4){
-				modelo.put("errorCambio", 1);
-				modelo.put("msjcambio", "La contraseña ingresada contiene caracteres inválidos");
-			}
+				modelo.put("msjcambio", "No paso la verificacion del captcha");
 				List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
 				modelo.put("notas", notasUsuario);
 				modelo.put("nombre",misession.getAttribute("sessionNombre"));
 				modelo.put("nota", new Nota());
-				
 				return new ModelAndView("usuario",modelo);
+			}
 		}else{
 			return new ModelAndView("redirect:login");
-		}
+		}	
 	}
 
 	@RequestMapping(path="/ingresar-texto", method = RequestMethod.POST)
