@@ -157,6 +157,7 @@
 	<!-- Fin Modal Cambiar Contraseña-->  
 	<script src="js/jquery-3.3.1.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
+	<script src="js/miscript.js" type="text/javascript"></script>
 </body>
 <script>
 			
@@ -203,19 +204,6 @@
                 document.getElementById("password2").innerHTML = strength;
                 document.getElementById("password2").style.color = color;
             }
-            
-            $(document).ready(function(){
-// 				$("#eye").click(function(){
-// 					if($("#password2").attr("type") === "password")
-// 						$("#password2").removeAttr("type");
-// 					else $("#password2").attr("type","password");
-// 				});
-				$("#eye").mousedown(function(){
-					$("#password2").removeAttr("type");
-				});
-				$("#eye").mouseup(function(){
-					$("#password2").attr("type","password");
-				});
-			})
+          
         </script>
 </html>

@@ -8,6 +8,7 @@
    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
    <link href="css/estilos.css" rel="stylesheet">
+   <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body class="registrar">
 	   <c:if test="${not empty rol && rol == 'admin'}">
@@ -49,6 +50,8 @@
 									<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Contraseña" onkeyup="validatePassword(this.value);" /> 		      		  
 							    </div>
 							 </div>
+							 <div class="g-recaptcha" data-sitekey="6LeUwKUUAAAAAOHov99X7G3QkdEPw7Pfuvn5vBKl"></div>
+      						 <br/>
 							<button class="btn btn-lg btn-success btn-block" Type="Submit"/>Registrar</button>
 						  </form:form>
 						<c:if test="${not empty error}">
@@ -75,29 +78,6 @@
 			</div>
 		</section>
 
-		
-		
-	<!-- Modal Recuperar Contraseña-->
-	<div class="modal fade" id="modalRecuperarContrasenia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content pb-3">
-	      <div class="modal-header">
-	        <h6 class="modal-title" id="exampleModalLabel">Escriba su dirección de email para recuperar su contraseña</h6>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body pb-3">
-	        <form action="recuperarContrasenia" class="text-center px-5" method="GET" >
-	        	<input value="" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña -->
-				<input class="form-control mb-4" name="email" id="email" type="email" placeholder="Email"/>
-				<input class="btn btn-lg btn-warning btn-block text-white" Type="Submit" value="Recuperar Contraseña"/>
-			</form>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-	<!-- Fin Modal Recuperar Contraseña--> 
 		
 		<!-- Placed at the end of the document so the pages load faster -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" ></script>

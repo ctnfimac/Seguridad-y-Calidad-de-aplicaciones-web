@@ -103,8 +103,11 @@ public class ControladorUsuario {
 	    Integer validacionUsuario = servicioUsuario.validacionDeUsuario(usuarioNuevo);
 	    Integer validacionPassword = servicioUsuario.validarPasswordUsuarioAlRegistrar(usuarioNuevo);
 	
+	    String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+	    boolean verificaCaptcha = ServicioCaptcha.verify("6LeUwKUUAAAAANonvOMzybP_z_rJukkVktfN6wE8", gRecaptchaResponse);
+	    
 		try{	
-			if(validacionUsuario == 0 && validacionPassword == 0) {
+			if(validacionUsuario == 0 && validacionPassword == 0 && verificaCaptcha) {
 				servicioLogin.registrarUsuario(usuarioNuevo);
 				modelo.put("errorRegistro", 0);
 				modelo.put("msjregistro", "Se registro exitosamente, <a href='login'>inicie sesión</a>");
@@ -123,6 +126,9 @@ public class ControladorUsuario {
 			}else if(validacionPassword == 4){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "La contraseña ingresada contiene caracteres inválidos");
+			}else if(!verificaCaptcha){
+				modelo.put("errorRegistro", 1);
+				modelo.put("msjregistro", "No paso la verificacion del captcha");
 			}
 			
 		}catch(Exception e){
@@ -313,7 +319,7 @@ public class ControladorUsuario {
 				if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
 					if(contraseniaAnt.equals(contraseniaNueva)){
 							if(contraseniaAnt.length() >= 12 && contraseniaNueva.length() >= 12){
-								servicioUsuario.cambiarContrasenia(idUsuario, Md5Crypt.md5Crypt(contraseniaNueva.getBytes()));
+								servicioUsuario.cambiarContrasenia(idUsuario, contraseniaNueva);//Md5Crypt.md5Crypt(contraseniaNueva.getBytes())
 								//System.out.println("cambiando la pass");
 								modelo.put("errorCambio", 3);
 								modelo.put("msjcambio", "Contraseña actualizada ya puede <a href='login'>iniciar sesión</a>");

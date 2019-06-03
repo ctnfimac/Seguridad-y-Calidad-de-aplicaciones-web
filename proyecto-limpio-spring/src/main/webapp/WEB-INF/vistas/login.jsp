@@ -7,6 +7,7 @@
    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
    <link href="css/estilos.css" rel="stylesheet">
+   <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
 	   <c:if test="${not empty rol && rol == 'admin'}">
@@ -35,13 +36,23 @@
 			<div class="container  bg-light ">
 				<div class="row d-flex align-items-center justify-content-center rounded-sm">
 					<div class="col-xs-12 col-md-5">
-						<h3 class="text-center pb-3">Iniciar Sesión</h3>
+						<h3 class="text-center pb-2">Iniciar Sesión</h3>
 						<form:form action="validar-login" class="text-center" method="POST" modelAttribute="usuario">
-							<form:input path="email" class="form-control mb-4" id="email" type="email" placeholder="Usuario o E-mail"/>
-							<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Password"/>     		  
+							<form:input path="email" class="form-control mb-2" id="email" type="email" placeholder="Usuario o E-mail"/>
+<%-- 							<form:input path="password"  class="form-control mb-2" type="password" id="password" placeholder="Password"/>     		   --%>
+							  <div class="input-group flex-nowrap mb-4">
+								    <form:input path="password" class="form-control" id="password" type="password" placeholder="Password" onkeyup="validatePassword(this.value);" /><span id="password"></span>
+									<div class="input-group-prepend">
+									  <span class="input-group-text" id="eyelogin"><i class="fas fa-eye"></i>
+									  </span>
+									</div>
+								</div>
+							<c:if test="${mostrarCaptcha == true }">
+								<div class="g-recaptcha mb-2" data-sitekey="6LeUwKUUAAAAAOHov99X7G3QkdEPw7Pfuvn5vBKl"></div>
+							</c:if>
 							<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Login</button>
 						</form:form>
-						<p class="text-center mt-4">¿No tenés una cuenta?<a href="registrarUsuarioView"> Registrarse</a></p>
+						<p class="text-center mt-3 mb-0">¿No tenés una cuenta?<a href="registrarUsuarioView"> Registrarse</a></p>
 						<p class="text-center"><a href="#" data-toggle="modal" data-target="#modalRecuperarContrasenia">¿Olvidaste tu contraseña?</a></p>
 						<c:if test="${not empty error}">
 					        <div class="alert alert-dismissible alert-danger text-center py-2">
@@ -93,5 +104,6 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" ></script>
 		<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
 		<script src="js/bootstrap.min.js" type="text/javascript"></script>
+		<script src="js/miscript.js" type="text/javascript"></script>
 	</body>
 </html>
