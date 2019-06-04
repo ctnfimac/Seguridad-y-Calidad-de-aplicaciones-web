@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -28,17 +30,17 @@ public class ServicioLoginImpl implements ServicioLogin {
 	private ServicioLog servicioLog;
 
 	@Override
-	public Usuario consultarUsuario (Usuario usuario) {
+	public Usuario consultarUsuario (Usuario usuario) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		return servicioUsuarioDao.consultarUsuario(usuario);
 	}
 
 	@Override
-	public void cargarDatos() {
+	public void cargarDatos() throws NoSuchAlgorithmException, InvalidKeySpecException {
 		servicioUsuarioDao.cargarDatos();
 	}
 
 	@Override
-	public void registrarUsuario(Usuario usuario) {
+	public void registrarUsuario(Usuario usuario) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
 		servicioUsuarioDao.registrarUsuario(usuario);
 		

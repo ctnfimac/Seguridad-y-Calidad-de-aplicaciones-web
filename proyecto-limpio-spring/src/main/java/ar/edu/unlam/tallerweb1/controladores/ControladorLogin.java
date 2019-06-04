@@ -1,5 +1,8 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -39,7 +42,7 @@ public class ControladorLogin {
 	*/
 	// Este metodo escucha la URL localhost:8080/NOMBRE_APP/login si la misma es invocada por metodo http GET
 	@RequestMapping("/login")
-	public ModelAndView irALogin(HttpServletRequest request) {
+	public ModelAndView irALogin(HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		ModelMap modelo = new ModelMap();
 		HttpSession misession= (HttpSession) request.getSession();
 		if(misession.getAttribute("sessionId") == null)misession.invalidate();
@@ -55,7 +58,7 @@ public class ControladorLogin {
 	// El método recibe un objeto Usuario el que tiene los datos ingresados en el form correspondiente y se corresponde con el modelAttribute definido en el
 	// tag form:form
 	@RequestMapping(path = "/validar-login", method = RequestMethod.POST)
-	public ModelAndView validarLogin(@ModelAttribute("usuario") Usuario usuario, HttpServletRequest request) {
+	public ModelAndView validarLogin(@ModelAttribute("usuario") Usuario usuario, HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		ModelMap model = new ModelMap();		
 		Usuario usuarioBuscado = servicioLogin.consultarUsuario(usuario);	
 		Boolean mostrarCaptcha = false;

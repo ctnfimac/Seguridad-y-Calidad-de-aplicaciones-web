@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
 
@@ -85,7 +87,7 @@ public class ControladorUsuario {
 	}
 
 	@RequestMapping(path="/registrarUsuarioView")
-	public ModelAndView irAregistrarUsuarioView(HttpServletRequest request){
+	public ModelAndView irAregistrarUsuarioView(HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException{
 		ModelMap modelo = new ModelMap();
 		HttpSession misession= (HttpSession) request.getSession();
 		if(misession.getAttribute("sessionId") == null)misession.invalidate();

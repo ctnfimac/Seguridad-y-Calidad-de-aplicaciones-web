@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.dao;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,6 +18,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.unlam.tallerweb1.modelo.Funcionalidad;
+import ar.edu.unlam.tallerweb1.modelo.PBKDF2;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
 @Repository("usuarioDao")
@@ -29,7 +32,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
     private SessionFactory sessionFactory;
 
 	@Override
-	public Usuario consultarUsuario(Usuario usuario) {
+	public Usuario consultarUsuario(Usuario usuario) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		final Session session = sessionFactory.getCurrentSession();
 		Usuario resultado = null;
 		Usuario usuarioExistente = null;
@@ -38,12 +41,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 		.uniqueResult();
 		
 		if(usuarioExistente != null){
-			String encrypted2 = Md5Crypt.md5Crypt(usuario.getPassword().getBytes(), usuarioExistente.getPassword());
-			
-			String salt = usuario.getPassword().substring(usuario.getPassword().length() - 4);
-			String encryptedSalt2 = Md5Crypt.md5Crypt(salt.getBytes(), usuarioExistente.getSalt());
-			
-			if(usuarioExistente.getPassword().equals(encrypted2) && usuarioExistente.getSalt().equals(encryptedSalt2)) 
+			if(PBKDF2.validatePassword(usuario.getPassword(), usuarioExistente.getPassword())) 
 				resultado = usuarioExistente;
 		}
 
@@ -51,7 +49,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	}
 
 	@Override
-	public void cargarDatos() {
+	public void cargarDatos() throws NoSuchAlgorithmException, InvalidKeySpecException {
 		if(!this.datosCargados){
 			final Session session = sessionFactory.getCurrentSession();
 			this.datosCargados = true;
@@ -67,10 +65,10 @@ public class UsuarioDaoImpl implements UsuarioDao {
 			Funcionalidad verActividadPersonal = new Funcionalidad("Ver Historial de actividad");
 			Funcionalidad verActividadUsuarios = new Funcionalidad("Ver Historial de usuarios");
 			
-			Usuario usuario1 = new Usuario("admin@admin.com", Md5Crypt.md5Crypt("admin123456".getBytes()), Md5Crypt.md5Crypt("3456".getBytes()), "admin");
-			Usuario usuario2 = new Usuario("christian_estel87@hotmail.com", Md5Crypt.md5Crypt("123456".getBytes()), Md5Crypt.md5Crypt("3456".getBytes()), "user");
-			Usuario usuario3 = new Usuario("usuario2@usuario2.com", Md5Crypt.md5Crypt("usuario123456".getBytes()), Md5Crypt.md5Crypt("3456".getBytes()), "user");
-			Usuario usuario4 = new Usuario("usuario3@usuario3.com", Md5Crypt.md5Crypt("usuario123456".getBytes()), Md5Crypt.md5Crypt("3456".getBytes()), "user");
+			Usuario usuario1 = new Usuario("admin@admin.com",PBKDF2.generateStorngPasswordHash("admin123456") ,"admin");
+			Usuario usuario2 = new Usuario("christian_estel87@hotmail.com", PBKDF2.generateStorngPasswordHash("123456"),"user");
+			Usuario usuario3 = new Usuario("usuario2@usuario2.com", PBKDF2.generateStorngPasswordHash("usuario123456"), "user");
+			Usuario usuario4 = new Usuario("usuario3@usuario3.com", PBKDF2.generateStorngPasswordHash("usuario123456"), "user");
 			usuario1.setNombre("admin");
 			usuario2.setNombre("Homero");
 			usuario3.setNombre("usuario2");
@@ -101,13 +99,12 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	}
 
 	@Override
-	public void registrarUsuario(Usuario usuario) {
+	public void registrarUsuario(Usuario usuario) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		final Session session = sessionFactory.getCurrentSession();
 		usuario.setFechaAltaDeUsuario(new Date());
+
+		usuario.setPassword(PBKDF2.generateStorngPasswordHash(usuario.getPassword()));
 		
-		String salt = usuario.getPassword().substring(usuario.getPassword().length() - 4);
-		usuario.setPassword(Md5Crypt.md5Crypt(usuario.getPassword().getBytes()));
-		usuario.setSalt(Md5Crypt.md5Crypt(salt.getBytes()));	
 		session.save(usuario);
 	}
 
@@ -138,7 +135,6 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
 	     Usuario user = (Usuario)session.get(Usuario.class, idUsuario); 
 	     user.setPassword(contrasenia);
-	     user.setSalt(salt);
 	     
 	     session.update(user); 
 	}
