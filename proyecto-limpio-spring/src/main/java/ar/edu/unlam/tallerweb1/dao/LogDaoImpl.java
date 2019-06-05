@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import ar.edu.unlam.tallerweb1.modelo.Log;
@@ -29,6 +30,7 @@ public class LogDaoImpl implements LogDao {
 		final Session session = sessionFactory.getCurrentSession();
 		return  session.createCriteria(Log.class)
 				.add(Restrictions.eq("idUsuario",idUsuario))
+				.addOrder(Order.desc("fechaModificacion"))
 				.list();
 	}
 
@@ -36,6 +38,7 @@ public class LogDaoImpl implements LogDao {
 	public List<Log> getAllLogs() {
 		final Session session = sessionFactory.getCurrentSession();
 		return  session.createCriteria(Log.class)
+				.addOrder(Order.desc("fechaModificacion"))
 				.list();
 	}
 }

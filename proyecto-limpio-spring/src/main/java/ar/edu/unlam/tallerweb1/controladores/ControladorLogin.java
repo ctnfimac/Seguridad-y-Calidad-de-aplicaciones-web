@@ -183,7 +183,10 @@ public class ControladorLogin {
 				
 			}
 		}
+		
 		model.put("mostrarCaptcha",mostrarCaptcha);
+		model.put("error", "Usuario o clave incorrecta");
+		servicioLogin.saveLogIntentoIngreso("Intento de Ingreso: usuario o contraseña incorrecta.");
 		return new ModelAndView("login", model);
 	}
 

@@ -129,7 +129,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	}
 
 	@Override
-	public void cambiarContrasenia(Long idUsuario, String contrasenia, String salt) {
+	public void cambiarContrasenia(Long idUsuario, String contrasenia) {
 		
 		final Session session = sessionFactory.getCurrentSession();
 

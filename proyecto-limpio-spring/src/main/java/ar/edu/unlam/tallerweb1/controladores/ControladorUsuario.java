@@ -181,7 +181,7 @@ public class ControladorUsuario {
 	
 
 	@RequestMapping(path="/cambiar-contrasenia", method = RequestMethod.POST)
-	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuarioLogeado ,HttpServletRequest request){
+	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuarioLogeado ,HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException{
 		HttpSession misession= (HttpSession) request.getSession();
 	
 		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
@@ -321,7 +321,7 @@ public class ControladorUsuario {
 				if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
 					if(contraseniaAnt.equals(contraseniaNueva)){
 							if(contraseniaAnt.length() >= 12 && contraseniaNueva.length() >= 12){
-								servicioUsuario.cambiarContrasenia(idUsuario, contraseniaNueva);//Md5Crypt.md5Crypt(contraseniaNueva.getBytes())
+								servicioUsuario.cambiarContrasenia(idUsuario, contraseniaNueva);
 								//System.out.println("cambiando la pass");
 								modelo.put("errorCambio", 3);
 								modelo.put("msjcambio", "Contraseña actualizada ya puede <a href='login'>iniciar sesión</a>");

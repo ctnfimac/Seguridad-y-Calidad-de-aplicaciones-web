@@ -45,9 +45,16 @@
 							<div class="row">
 							    <div class="col">
 									<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Contraseña" onkeyup="validatePassword(this.value);" />
-							    </div>
+							    </div>    
+							 </div>
+							 <div class="row">
 							    <div class="col">
 									<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Contraseña" onkeyup="validatePassword(this.value);" /> 		      		  
+							    </div>
+							 </div>
+							 <div class="row">
+							    <div class="col">
+									<label id ="calidadPassword"></label> 		      		  
 							    </div>
 							 </div>
 							 <div class="g-recaptcha" data-sitekey="6LeUwKUUAAAAAOHov99X7G3QkdEPw7Pfuvn5vBKl"></div>
@@ -89,7 +96,7 @@
                 
                 // Do not show anything when the length of password is zero.
                 if (password.length === 0) {
-                    document.getElementById("password").innerHTML = "";
+                    document.getElementById("calidadPassword").innerHTML = "";
                     return;
                 }
                 // Create an array and push all possible values that you want in password
@@ -113,20 +120,20 @@
                     case 0:
                     case 1:
                     case 2:
-                        strength = "Very Weak";
+                        strength = "Seguridad de contraseña: Débil";
                         color = "red";
                         break;
                     case 3:
-                        strength = "Medium";
+                        strength = "Seguridad de contraseña: Media";
                         color = "orange";
                         break;
                     case 4:
-                        strength = "Strong";
+                        strength = "Seguridad de contraseña: Fuerte";
                         color = "green";
                         break;
                 }
-                document.getElementById("password").innerHTML = strength;
-                document.getElementById("password").style.color = color;
+                document.getElementById("calidadPassword").innerHTML = strength;
+                document.getElementById("calidadPassword").style.color = color;
             }
         </script>
 </html>

@@ -15,7 +15,7 @@ public interface UsuarioDao {
 	void registrarUsuario(Usuario usuario) throws NoSuchAlgorithmException, InvalidKeySpecException;
 	List<Usuario> obtenerUsuarios();
 	Usuario GetUsuarioById(Long idUsuario);
-	void cambiarContrasenia(Long idUsuario, String contrasenia, String salt);
+	void cambiarContrasenia(Long idUsuario, String contrasenia);
 	Boolean getHabilitado(Long id);
 	Usuario getUsuarioByEmail(String email);
 	String getPassById(Long id);

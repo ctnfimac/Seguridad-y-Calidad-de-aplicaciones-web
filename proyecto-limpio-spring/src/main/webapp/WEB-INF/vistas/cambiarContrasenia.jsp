@@ -40,8 +40,9 @@
 						  
 							 <form:form action="actualizarPass" class="text-center px-5" method="POST" modelAttribute="usuario">
 					        	<form:input path="idE" value="${id}" class="form-control mb-4" type="hidden" /> 
-								<form:input path="password" class="form-control mb-4" id="password" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" /><span id="password"></span>
-								<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Repetir nueva Contraseña"/>
+								<form:input path="password" class="form-control mb-4" id="password" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" />
+								<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Repetir nueva Contraseña" onkeyup="validatePassword(this.value);"/>
+								<span id="calidadPassword"></span>
 								<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña">
 							 </form:form>
 						
@@ -79,7 +80,7 @@
                 
                 // Do not show anything when the length of password is zero.
                 if (password.length === 0) {
-                    document.getElementById("password").innerHTML = "";
+                    document.getElementById("calidadPassword").innerHTML = "";
                     return;
                 }
                 // Create an array and push all possible values that you want in password
@@ -103,20 +104,20 @@
                     case 0:
                     case 1:
                     case 2:
-                        strength = "Very Weak";
+                        strength = "Seguridad de contraseña: Débil";
                         color = "red";
                         break;
                     case 3:
-                        strength = "Medium";
+                        strength = "Seguridad de contraseña: Media";
                         color = "orange";
                         break;
                     case 4:
-                        strength = "Strong";
+                        strength = "Seguridad de contraseña: Fuerte";
                         color = "green";
                         break;
                 }
-                document.getElementById("password").innerHTML = strength;
-                document.getElementById("password").style.color = color;
+                document.getElementById("calidadPassword").innerHTML = strength;
+                document.getElementById("calidadPassword").style.color = color;
             }
         </script>
 </html>

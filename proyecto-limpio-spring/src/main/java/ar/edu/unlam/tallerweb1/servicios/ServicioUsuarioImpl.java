@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
+import ar.edu.unlam.tallerweb1.modelo.PBKDF2;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
 @Service("servicioUsuario")
@@ -37,13 +40,11 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	private static final List<String> emailsNoPermitidos = Arrays.asList("admin", "admin@admin.com", "christian_estel87@hotmail.com","usuario2@usuario2.com","usuario3@usuario3.com");
 	
 	@Override
-	public void cambiarContrasenia(Long idUsuario, String contrasenia) {
+	public void cambiarContrasenia(Long idUsuario, String contrasenia) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
-		String contraseniaEncrypt = Md5Crypt.md5Crypt(contrasenia.getBytes());
-		String salt = contrasenia.substring(contrasenia.length() - 4);
-		String saltEncryp = Md5Crypt.md5Crypt(salt.getBytes());
-		
-		usuarioDao.cambiarContrasenia(idUsuario, contraseniaEncrypt, saltEncryp);	
+		String contraseniaEncrypt = PBKDF2.generateStorngPasswordHash(contrasenia);
+				
+		usuarioDao.cambiarContrasenia(idUsuario, contraseniaEncrypt);	
 		
 		String funcionalidad = "Cambio de contraseña";
 		
@@ -54,17 +55,15 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	}
 
 	@Override
-	public Boolean recuperarContrasenia(Long idUsuario) {
+	public Boolean recuperarContrasenia(Long idUsuario) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
 		Usuario usuario = usuarioDao.GetUsuarioById(idUsuario);
 		
 		if(usuario != null) {
 			
-			String nuevaContrasenia = Md5Crypt.md5Crypt("123456".getBytes());
-			String salt = nuevaContrasenia.substring(nuevaContrasenia.length() - 4);
-			String saltEncryp = Md5Crypt.md5Crypt(salt.getBytes());
+			String nuevaContrasenia = PBKDF2.generateStorngPasswordHash("123456");
 			
-			usuarioDao.cambiarContrasenia(idUsuario, nuevaContrasenia, saltEncryp);
+			usuarioDao.cambiarContrasenia(idUsuario, nuevaContrasenia);
 			
 			String funcionalidad = "Recupero de contraseña";
 			
@@ -146,14 +145,15 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	}
 	
 	@Override
-	public Integer validarPasswordUsuario(Usuario usuarioNuevo) {
+	public Integer validarPasswordUsuario(Usuario usuarioNuevo) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
-		String contraseniaActualAlmacenada = usuarioDao.getPassById(usuarioNuevo.getId());
-		String encrypted2 = Md5Crypt.md5Crypt(usuarioNuevo.getPassword().getBytes(), contraseniaActualAlmacenada);
+		String contraseniaActualAlmacenada = usuarioDao.getPassById(usuarioNuevo.getId()); 
+		
+		//String encrypted2 = Md5Crypt.md5Crypt(usuarioNuevo.getPassword().getBytes(), contraseniaActualAlmacenada);
 		
 		if(usuarioNuevo.getPassword().isEmpty() || usuarioNuevo.getPassword2().isEmpty() ){
 			return 1 ; // campos icompletos
-		}else if(!contraseniaActualAlmacenada.equals(encrypted2)){
+		}else if(!PBKDF2.validatePassword(usuarioNuevo.getPassword(), contraseniaActualAlmacenada)){
 			return 2 ; // las contraseña actual en el usuario no coindide con 
 							   // la contraseña actual ingresada en el formulario
 		}else if(contraseniasNoPermitidas.contains(usuarioNuevo.getPassword2()) ){
