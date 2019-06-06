@@ -111,9 +111,9 @@
 		        </button>
 		      </div>
 		      <div class="modal-body pb-3">
-		        <form:form action="registrar-nota" class="text-center px-5" method="POST" modelAttribute="nota">
+		        <form:form action="registrar-nota" class="text-center px-5" method="POST" modelAttribute="nota" autocomplete="off">
 					<div class="form-group">
-					    <form:textarea path="Descripcion" class="form-control" id="Descripcion" rows="3"></form:textarea>
+					    <form:textarea path="Descripcion" class="form-control" id="Descripcion" rows="3" autocomplete="off"></form:textarea>
 					</div>
 					<button class="btn btn-lg btn-primary btn-block" Type="Submit"/>Crear Nota</button>
 				</form:form>
@@ -135,18 +135,18 @@
 	        </button>
 	      </div>
 	      <div class="modal-body pb-3">
-	        <form:form action="cambiar-contrasenia" id='demo-form' class="text-center px-5" method="POST" modelAttribute="usuario">
-				<form:input path="password" class="form-control mb-4" id="password" type="password" name="password" placeholder="Contraseña Actual"/> 
-<%-- 				<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" /><span id="password"></span> --%>
+	        <form:form action="cambiar-contrasenia" id='demo-form' class="text-center px-5" method="POST" modelAttribute="usuario" autocomplete="off">
+				   <form:input path="password" class="form-control mb-4" id="password" type="password" name="password" placeholder="Contraseña Actual" autocomplete="off"/> 
+				   
+				   <small id ="calidadPassword" class="form-text text-left"></small>
 				   <div class="input-group flex-nowrap mb-4">
-				    <form:input path="password2" class="form-control" id="password2" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" />
+				    <form:input path="password2" class="form-control" id="password2" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" autocomplete="off"/>
 					<div class="input-group-prepend">
 					  <span class="input-group-text" id="eye">
 					  	<i class="fas fa-eye"></i>
 					  </span>
 					</div>
-				</div>
-					<span id="calidadPassword"></span>
+				   </div>
 				<div class="g-recaptcha" data-sitekey="6LeUwKUUAAAAAOHov99X7G3QkdEPw7Pfuvn5vBKl"></div>
       			<br/>
 				<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña"> 

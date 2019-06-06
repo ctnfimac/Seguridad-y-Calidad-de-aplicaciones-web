@@ -34,33 +34,23 @@
 	  </nav>
 	  
 	  
-	  	<section id="section-registrar" class="mt-5">
+	  	<section id="section-registrar" class="mt-3">
+	  		<h2 class="text-center pb-3 text-white">Registrar Usuario</h2>
 			<div class="container  bg-light ">
 				<div class="row d-flex align-items-center justify-content-center rounded-sm">
-					<div class="col-xs-12 col-md-5">
-						<h3 class="text-center pb-3">Registrar Usuario</h3>
-						 <form:form action="registrar-usuario" class="text-center px-5" method="POST" modelAttribute="usuario">
-							<form:input path="email" class="form-control mb-4" id="email" type="email" placeholder="E-mail"/>
-							<form:input path="nombre" class="form-control mb-4" id="nombre" type="text" placeholder="nombre"/>
-							<div class="row">
-							    <div class="col">
-									<form:input path="password"  class="form-control mb-4" type="password" id="password" placeholder="Contraseña" onkeyup="validatePassword(this.value);" />
-							    </div>    
-							 </div>
-							 <div class="row">
-							    <div class="col">
-									<form:input path="password2"  class="form-control mb-4" type="password" id="password2" placeholder="Repetir Contraseña" onkeyup="validatePassword(this.value);" /> 		      		  
-							    </div>
-							 </div>
-							 <div class="row">
-							    <div class="col">
-									<label id ="calidadPassword"></label> 		      		  
-							    </div>
-							 </div>
+					<div class="col-xs-12 col-md-6 py-2 py-md-0">
+						 <form:form action="registrar-usuario" class="text-center px-5" method="POST" modelAttribute="usuario" autocomplete="off">
+							<form:input path="email" class="form-control mb-2" id="email" type="email" placeholder="E-mail" autocomplete="off"/>
+							<form:input path="nombre" class="form-control mb-2" id="nombre" type="text" placeholder="nombre" autocomplete="off"/>
+							<form:input path="password"  class="form-control mb-2" type="password" id="password" placeholder="Contraseña" onkeyup="validatePassword(this.value);" autocomplete="off"/>
+							<div class="form-group mb-2">
+								<form:input path="password2"  class="form-control" type="password" id="password2" placeholder="Repetir Contraseña" onkeyup="validatePassword(this.value);" autocomplete="off"/> 		      		  
+						    	<small id ="calidadPassword" class="form-text text-left"></small>
+						     </div>
 							 <div class="g-recaptcha" data-sitekey="6LeUwKUUAAAAAOHov99X7G3QkdEPw7Pfuvn5vBKl"></div>
       						 <br/>
-							<button class="btn btn-lg btn-success btn-block" Type="Submit"/>Registrar</button>
-						  </form:form>
+							<button class="btn btn-md btn-success btn-block" Type="Submit"/>Registrar</button>
+						 
 						<c:if test="${not empty error}">
 					        <div class="alert alert-dismissible alert-danger text-center py-2 mt-2">
 							  ${error}!
@@ -77,8 +67,9 @@
 							</div>
 				        </c:if>
 						<!-- Default form login -->
+						 </form:form>
 					</div>
-					<div class="col-xs-12 col-md-7 p-0 m-0 overflow-hidden" style="background-color:#131030">
+					<div class="col-xs-12 col-md-6 p-0 m-0 overflow-hidden" style="background-color:#131030">
 						<img src="img/registro.jpg"/>
 					</div>
 				</div>

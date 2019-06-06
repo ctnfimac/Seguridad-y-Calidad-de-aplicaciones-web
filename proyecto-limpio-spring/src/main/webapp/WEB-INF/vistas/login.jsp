@@ -37,11 +37,11 @@
 				<div class="row d-flex align-items-center justify-content-center rounded-sm">
 					<div class="col-xs-12 col-md-5">
 						<h3 class="text-center pb-2">Iniciar Sesión</h3>
-						<form:form action="validar-login" class="text-center" method="POST" modelAttribute="usuario">
-							<form:input path="email" class="form-control mb-2" id="email" type="email" placeholder="Usuario o E-mail"/>
+						<form:form action="validar-login" class="text-center" method="POST" modelAttribute="usuario" autocomplete="off" >
+							<form:input path="email" class="form-control mb-2" id="email" type="email" name="email" placeholder="Usuario o E-mail" autocomplete="off"/>
 <%-- 							<form:input path="password"  class="form-control mb-2" type="password" id="password" placeholder="Password"/>     		   --%>
 							  <div class="input-group flex-nowrap mb-4">
-								    <form:input path="password" class="form-control" id="password" type="password" placeholder="Password" onkeyup="validatePassword(this.value);" /><span id="password"></span>
+								    <form:input path="password" class="form-control" id="password" type="password" name="password" placeholder="Password" onkeyup="validatePassword(this.value);" autocomplete="off"/><span id="password"></span>
 									<div class="input-group-prepend">
 									  <span class="input-group-text" id="eyelogin"><i class="fas fa-eye"></i>
 									  </span>
@@ -89,9 +89,9 @@
 	        </button>
 	      </div>
 	      <div class="modal-body pb-3">
-	        <form action="recuperarContrasenia" class="text-center px-5" method="GET" >
+	        <form action="recuperarContrasenia" class="text-center px-5" method="GET" autocomplete="off">
 	        	<input value="" class="form-control mb-4" type="hidden" /> <!-- se puede poner el id o email del usuario para usarlo como indice en el cambio de contraseña -->
-				<input class="form-control mb-4" name="email" id="email" type="email" placeholder="Email"/>
+				<input class="form-control mb-4" name="email" id="email" type="email" placeholder="Email" autocomplete="off"/>
 				<input class="btn btn-lg btn-warning btn-block text-white" Type="Submit" value="Recuperar Contraseña"/>
 			</form>
 	      </div>

@@ -31,20 +31,21 @@
 		</ul>
 	  </nav>
 	  
-	  
-	  
+	 
 			<section id="section-cambiandopass" class="mt-5">
 				<div class="container   ">
 					<div class="row d-flex align-items-center justify-content-center rounded-sm">
 						<div class="col-xs-12 col-md-5 bg-light py-5">
 						  
-							 <form:form action="actualizarPass" class="text-center px-5" method="POST" modelAttribute="usuario">
+							 <form:form action="actualizarPass" class="text-center px-5" method="POST" modelAttribute="usuario" autocomplete="off">
 					        	<form:input path="idE" value="${id}" class="form-control mb-4" type="hidden" /> 
-								<form:input path="password" class="form-control mb-4" id="password" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" />
-								<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Repetir nueva Contraseña" onkeyup="validatePassword(this.value);"/>
-								<span id="calidadPassword"></span>
+					        	<div class="form-group mb-4">
+									<form:input path="password" class="form-control" id="password" type="password" placeholder="Contraseña Nueva" onkeyup="validatePassword(this.value);" autocomplete="off"/>
+									<small id ="calidadPassword" class="form-text text-left"></small>
+								</div>
+								<form:input path="password2" class="form-control mb-4" id="password2" type="password" placeholder="Repetir nueva Contraseña" autocomplete="off"/>
+<!-- 								<span id="calidadPassword"></span> -->
 								<input class="btn btn-lg btn-primary btn-block" type="submit" value="Cambiar Contraseña">
-							 </form:form>
 						
 							 <c:if test="${(not empty msjcambio) && (errorCambio==3)}">
 						        <div class="alert alert-dismissible alert-success text-center py-2 mt-4">
@@ -62,6 +63,8 @@
 								</div>
 					        </c:if>
 							<!-- Default form login -->
+							</form:form>
+						
 						</div>
 					</div>
 				</div>
