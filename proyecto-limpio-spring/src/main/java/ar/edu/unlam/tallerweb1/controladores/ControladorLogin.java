@@ -59,40 +59,17 @@ public class ControladorLogin {
 	// tag form:form
 	@RequestMapping(path = "/validar-login", method = RequestMethod.POST)
 	public ModelAndView validarLogin(@ModelAttribute("usuario") Usuario usuario, HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
-		ModelMap model = new ModelMap();		
-		Usuario usuarioBuscado = servicioLogin.consultarUsuario(usuario);	
-		Boolean mostrarCaptcha = false;
-		if (usuarioBuscado != null) {
-			if(!captchaActivadoLogin){
-				this.cantIntentoIngreso = 0;
-				
-				request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
-				request.getSession().setAttribute("sessionId", usuarioBuscado.getId());
-				request.getSession().setAttribute("sessionNombre", usuarioBuscado.getNombre());
-	
-				Long id = usuarioBuscado.getId();
-				servicioLogin.saveLogIngreso(id);
-				
-				if(usuarioBuscado.getRol() == "admin") {
-					return new ModelAndView("redirect:/admin");	
-				}
-				else {
-					if(usuarioBuscado.getHabilitado() == true) {
-						return new ModelAndView("redirect:/usuario");
-					}
-					else {
-						model.put("error", "Su usuario se encuentra deshabilitado. Comuniquese con el Administrador");
-						servicioLogin.saveLogIntentoIngreso("Intento Ingreso: Usuario Deshabilitado.");
-						return new ModelAndView("login", model);	
-					}
-				}
-			}else{
-				String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-				boolean verificaCaptcha = ServicioCaptcha.verify("6LeUwKUUAAAAANonvOMzybP_z_rJukkVktfN6wE8", gRecaptchaResponse);
-				if(verificaCaptcha){
+		String  urlBaseDelSitio = "http://localhost:8080/proyecto-limpio-spring/";
+		String urlDeOrigen = request.getRequestURL().toString();
+		boolean contieneUrl = urlDeOrigen.contains(urlBaseDelSitio);
+
+		if(contieneUrl){
+			ModelMap model = new ModelMap();		
+			Usuario usuarioBuscado = servicioLogin.consultarUsuario(usuario);	
+			Boolean mostrarCaptcha = false;
+			if (usuarioBuscado != null) {
+				if(!captchaActivadoLogin){
 					this.cantIntentoIngreso = 0;
-					this.contadorDeIngresosConCaptcha = 0;
-					this.captchaActivadoLogin = false;
 					
 					request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
 					request.getSession().setAttribute("sessionId", usuarioBuscado.getId());
@@ -115,79 +92,95 @@ public class ControladorLogin {
 						}
 					}
 				}else{
-					model.put("error", "No verifico la prueba del captcha");
-					servicioLogin.saveLogIntentoIngreso("Intento Ingreso: No verifico el captcha.");
-					mostrarCaptcha = true; 
-					model.put("mostrarCaptcha",mostrarCaptcha);
-					this.contadorDeIngresosConCaptcha++;
-					if(this.contadorDeIngresosConCaptcha < 2 )return new ModelAndView("login", model);
-					else{
-						servicioAdmin.cambiarEstadoUsuario(usuarioBuscado.getId(), false);
+					String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+					boolean verificaCaptcha = ServicioCaptcha.verify("6LeUwKUUAAAAANonvOMzybP_z_rJukkVktfN6wE8", gRecaptchaResponse);
+					if(verificaCaptcha){
+						this.cantIntentoIngreso = 0;
+						this.contadorDeIngresosConCaptcha = 0;
+						this.captchaActivadoLogin = false;
+						
+						request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
+						request.getSession().setAttribute("sessionId", usuarioBuscado.getId());
+						request.getSession().setAttribute("sessionNombre", usuarioBuscado.getNombre());
+			
+						Long id = usuarioBuscado.getId();
+						servicioLogin.saveLogIngreso(id);
+						
+						if(usuarioBuscado.getRol() == "admin") {
+							return new ModelAndView("redirect:/admin");	
+						}
+						else {
+							if(usuarioBuscado.getHabilitado() == true) {
+								return new ModelAndView("redirect:/usuario");
+							}
+							else {
+								model.put("error", "Su usuario se encuentra deshabilitado. Comuniquese con el Administrador");
+								servicioLogin.saveLogIntentoIngreso("Intento Ingreso: Usuario Deshabilitado.");
+								return new ModelAndView("login", model);	
+							}
+						}
+					}else{
+						model.put("error", "No verifico la prueba del captcha");
+						servicioLogin.saveLogIntentoIngreso("Intento Ingreso: No verifico el captcha.");
+						mostrarCaptcha = true; 
+						model.put("mostrarCaptcha",mostrarCaptcha);
+						this.contadorDeIngresosConCaptcha++;
+						if(this.contadorDeIngresosConCaptcha < 2 )return new ModelAndView("login", model);
+						else{
+							servicioAdmin.cambiarEstadoUsuario(usuarioBuscado.getId(), false);
+							this.cantIntentoIngreso = 0;
+							this.contadorDeIngresosConCaptcha = 0;
+							model.put("error", "Su usuario ha sido deshabilitado. Comuniquese con el Administrador");
+							servicioLogin.saveLogIntentoIngreso("Intento Ingreso: Maximo de intentos superado.");//maximo de intentos de ingreso superado
+							return new ModelAndView("login", model);
+						}
+					}
+				}
+			} else 
+			{	
+				Usuario usuarioIntento = servicioUsuario.getUsuarioByEmail(usuario.getEmail());	
+				
+				if(usuarioIntento != null) {
+					if(cantIntentoIngreso < 5){		
+						Usuario user = servicioLogin.consultarUsuario(usuario);				
+						if(user == null) {
+							model.put("error", "Usuario o clave incorrecta");
+							servicioLogin.saveLogIntentoIngreso("Intento de Ingreso: usuario o contraseña incorrecta.");
+							this.cantIntentoIngreso ++;
+							if(cantIntentoIngreso == 5 ){
+								mostrarCaptcha = true; 
+								captchaActivadoLogin = true;
+							}
+						}	
+					}else if(cantIntentoIngreso >= 5 && contadorDeIngresosConCaptcha < 2){
+						mostrarCaptcha = true;
+						String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+						boolean verificaCaptcha = ServicioCaptcha.verify("6LeUwKUUAAAAANonvOMzybP_z_rJukkVktfN6wE8", gRecaptchaResponse);
+						Usuario user = servicioLogin.consultarUsuario(usuario);	
+						if(user == null || !verificaCaptcha) {
+							model.put("error", "Error al querer ingresar");
+							servicioLogin.saveLogIntentoIngreso("Intento de Ingreso: usuario, contraseña incorrecta o error en verificacion del captcha.");
+							this.contadorDeIngresosConCaptcha ++;
+						}
+					}else {
+						servicioAdmin.cambiarEstadoUsuario(usuarioIntento.getId(), false);
 						this.cantIntentoIngreso = 0;
 						this.contadorDeIngresosConCaptcha = 0;
 						model.put("error", "Su usuario ha sido deshabilitado. Comuniquese con el Administrador");
 						servicioLogin.saveLogIntentoIngreso("Intento Ingreso: Maximo de intentos superado.");//maximo de intentos de ingreso superado
-						return new ModelAndView("login", model);
+						return new ModelAndView("login", model);	
 					}
-				}
-			}
-		} else 
-		{	
-			Usuario usuarioIntento = servicioUsuario.getUsuarioByEmail(usuario.getEmail());	
-			
-			if(usuarioIntento != null) {
-				/*if(cantIntentoIngreso <= 3) {		
-					Usuario user = servicioLogin.consultarUsuario(usuario);				
-					if(user == null) {
-						model.put("error", "Usuario o clave incorrecta");
-						servicioLogin.saveLogIntentoIngreso("Intento de Ingreso: usuario o contraseña incorrecta.");
-						this.cantIntentoIngreso ++;
-					}				
-				}else {
 					
-					servicioAdmin.cambiarEstadoUsuario(usuarioIntento.getId(), false);
-					this.cantIntentoIngreso = 0;
-					model.put("error", "Su usuario ha sido deshabilitado. Comuniquese con el Administrador");
-					servicioLogin.saveLogIntentoIngreso("Intento Ingreso: Maximo de intentos superado.");//maximo de intentos de ingreso superado
-					return new ModelAndView("login", model);	
-				}*/
-				if(cantIntentoIngreso < 5){		
-					Usuario user = servicioLogin.consultarUsuario(usuario);				
-					if(user == null) {
-						model.put("error", "Usuario o clave incorrecta");
-						servicioLogin.saveLogIntentoIngreso("Intento de Ingreso: usuario o contraseña incorrecta.");
-						this.cantIntentoIngreso ++;
-						if(cantIntentoIngreso == 5 ){
-							mostrarCaptcha = true; 
-							captchaActivadoLogin = true;
-						}
-					}	
-				}else if(cantIntentoIngreso >= 5 && contadorDeIngresosConCaptcha < 2){
-					mostrarCaptcha = true;
-					String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-					boolean verificaCaptcha = ServicioCaptcha.verify("6LeUwKUUAAAAANonvOMzybP_z_rJukkVktfN6wE8", gRecaptchaResponse);
-					Usuario user = servicioLogin.consultarUsuario(usuario);	
-					if(user == null || !verificaCaptcha) {
-						model.put("error", "Error al querer ingresar");
-						servicioLogin.saveLogIntentoIngreso("Intento de Ingreso: usuario, contraseña incorrecta o error en verificacion del captcha.");
-						this.contadorDeIngresosConCaptcha ++;
-					}
-				}else {
-					servicioAdmin.cambiarEstadoUsuario(usuarioIntento.getId(), false);
-					this.cantIntentoIngreso = 0;
-					this.contadorDeIngresosConCaptcha = 0;
-					model.put("error", "Su usuario ha sido deshabilitado. Comuniquese con el Administrador");
-					servicioLogin.saveLogIntentoIngreso("Intento Ingreso: Maximo de intentos superado.");//maximo de intentos de ingreso superado
-					return new ModelAndView("login", model);	
 				}
-				
 			}
+			
+			model.put("mostrarCaptcha",mostrarCaptcha);
+			model.put("error", "Usuario o clave incorrecta");
+			servicioLogin.saveLogIntentoIngreso("Intento de Ingreso: usuario o contraseña incorrecta.");
+			return new ModelAndView("login", model);
+		}else{
+			return new ModelAndView("redirect: login");
 		}
-		
-		model.put("mostrarCaptcha",mostrarCaptcha);
-		model.put("error", "Usuario o clave incorrecta");
-		servicioLogin.saveLogIntentoIngreso("Intento de Ingreso: usuario o contraseña incorrecta.");
-		return new ModelAndView("login", model);
 	}
 
 	// Escucha la URL /home por GET, y redirige a una vista.
