@@ -23,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import ar.edu.unlam.tallerweb1.dao.HistorialPasswordDao;
 import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
+import ar.edu.unlam.tallerweb1.modelo.HistorialPassword;
 import ar.edu.unlam.tallerweb1.modelo.PBKDF2;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
@@ -34,6 +36,8 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	@Inject
 	private UsuarioDao usuarioDao;
 	@Inject
+	private HistorialPasswordDao historialPasswordDao;
+	@Inject
 	private ServicioLog servicioLog;
 
 	private static final List<String> contraseniasNoPermitidas = Arrays.asList("123456", "abc123","usuario123456","admin","root","admin123456");
@@ -42,16 +46,28 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	@Override
 	public void cambiarContrasenia(Long idUsuario, String contrasenia) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
-		String contraseniaEncrypt = PBKDF2.generateStorngPasswordHash(contrasenia);
-				
-		usuarioDao.cambiarContrasenia(idUsuario, contraseniaEncrypt);	
-		
-		String funcionalidad = "Cambio de contraseña";
-		
-		String mensajeLog;
-		mensajeLog = String.format("\"El usuario %s cambio su contrasenia. ", Long.toString(idUsuario));
+		try {
+			
+			String contraseniaEncrypt = PBKDF2.generateStorngPasswordHash(contrasenia);
+			
+			usuarioDao.cambiarContrasenia(idUsuario, contraseniaEncrypt);	
+			historialPasswordDao.SaveHistorialPassword(idUsuario, contraseniaEncrypt);
+			
+			String funcionalidad = "Cambio de contraseña";
+			String mensajeLog;
+			mensajeLog = String.format("\"El usuario %s cambio su contrasenia. ", Long.toString(idUsuario));
 
-		servicioLog.guardarLog(idUsuario, funcionalidad, mensajeLog);
+			servicioLog.guardarLog(idUsuario, funcionalidad, mensajeLog);
+			
+		} catch (Exception e) {
+			
+			String funcionalidad = "Cambio de contraseña";
+			String mensajeLog;
+			mensajeLog = String.format("\"Se ha producido un errr en el cambio de contraseña. ", Long.toString(idUsuario));
+
+			servicioLog.guardarLog(idUsuario, funcionalidad, mensajeLog);
+		}
+		
 	}
 
 	@Override
@@ -147,10 +163,11 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	@Override
 	public Integer validarPasswordUsuario(Usuario usuarioNuevo) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
-		String contraseniaActualAlmacenada = usuarioDao.getPassById(usuarioNuevo.getId()); 
+		String contraseniaActualAlmacenada = usuarioDao.getPassById(usuarioNuevo.getId()); 		
 		
-		//String encrypted2 = Md5Crypt.md5Crypt(usuarioNuevo.getPassword().getBytes(), contraseniaActualAlmacenada);
-		
+		String contraseniaEncrypt = PBKDF2.generateStorngPasswordHash(usuarioNuevo.getPassword()); 
+		HistorialPassword contraseniasAnt = historialPasswordDao.getPasswordByDesc(contraseniaEncrypt);			
+				
 		if(usuarioNuevo.getPassword().isEmpty() || usuarioNuevo.getPassword2().isEmpty() ){
 			return 1 ; // campos icompletos
 		}else if(!PBKDF2.validatePassword(usuarioNuevo.getPassword(), contraseniaActualAlmacenada)){
@@ -163,6 +180,8 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 		}else if(StringUtils.containsWhitespace(usuarioNuevo.getPassword2()) ){
 			return 4 ;// la contraseña contiene espacios en blanco
 		}else if(!this.ValidarCaracteres(usuarioNuevo.getPassword2()) ) 			
+			return 4 ;// la contraseña contiene emogis
+		else if(contraseniasAnt != null && !contraseniasAnt.getActiva() ) 			
 			return 4 ;// la contraseña contiene emogis
 		
 		return 0;	

@@ -18,6 +18,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.unlam.tallerweb1.modelo.Funcionalidad;
+import ar.edu.unlam.tallerweb1.modelo.HistorialPassword;
 import ar.edu.unlam.tallerweb1.modelo.PBKDF2;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
@@ -95,6 +96,9 @@ public class UsuarioDaoImpl implements UsuarioDao {
 			session.save(rechazarUsuario);
 			session.save(verActividadPersonal);
 			session.save(verActividadUsuarios);
+			
+			HistorialPassword hist = new HistorialPassword(new java.util.Date() ,usuario4, usuario4.getPassword(), true);
+			session.save(hist);
 		}
 	}
 

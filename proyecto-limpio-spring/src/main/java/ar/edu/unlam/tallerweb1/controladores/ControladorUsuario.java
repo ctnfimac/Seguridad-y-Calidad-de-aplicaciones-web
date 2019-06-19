@@ -182,9 +182,11 @@ public class ControladorUsuario {
 
 	@RequestMapping(path="/cambiar-contrasenia", method = RequestMethod.POST)
 	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuarioLogeado ,HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException{
-		HttpSession misession= (HttpSession) request.getSession();
-	
+		
+		HttpSession misession= request.getSession();
+
 		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
+			
 			long idUsuarioLogueado = (long)misession.getAttribute("sessionId");
 			ModelMap modelo = new ModelMap();
 			usuarioLogeado.setId(idUsuarioLogueado);
