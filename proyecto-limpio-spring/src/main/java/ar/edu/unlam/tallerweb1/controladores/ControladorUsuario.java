@@ -182,57 +182,49 @@ public class ControladorUsuario {
 
 	@RequestMapping(path="/cambiar-contrasenia", method = RequestMethod.POST)
 	public ModelAndView cambiarContraseña(@ModelAttribute("usuario") Usuario usuarioLogeado ,HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException{
-		
+
 		HttpSession misession= request.getSession();
 
 		if(misession.getAttribute("sessionId") != null && servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))) {
-			
+
 			long idUsuarioLogueado = (long)misession.getAttribute("sessionId");
 			ModelMap modelo = new ModelMap();
 			usuarioLogeado.setId(idUsuarioLogueado);
 			Integer validacionContraseña = servicioUsuario.validarPasswordUsuario(usuarioLogeado);
-			
-			String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-			boolean verificaCaptcha = ServicioCaptcha.verify("6LeUwKUUAAAAANonvOMzybP_z_rJukkVktfN6wE8", gRecaptchaResponse);
-			if (verificaCaptcha) {
-					if(validacionContraseña == 0) {
-						try{
-							usuarioLogeado.setPassword(usuarioLogeado.getPassword2());
-							servicioUsuario.cambiarContrasenia(idUsuarioLogueado, usuarioLogeado.getPassword());
-							modelo.put("errorCambio", 0);
-							modelo.put("msjcambio", "Se actualizo su contraseña exitosamente");
-						}catch(Exception e){
-							modelo.put("errorCambio", 1);
-							modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
-						}
-					}else if(validacionContraseña == 1){
-						modelo.put("errorCambio", 1);
-						modelo.put("msjcambio", "Complete todos los campos");
-					}else if(validacionContraseña == 2){
-						modelo.put("errorCambio", 1);
-						modelo.put("msjcambio", "contraseña actual incorrecta");
-					}else if(validacionContraseña == 3){
-						modelo.put("errorCambio", 1);
-						modelo.put("msjcambio", "La contraseña tiene menos de 12 caracteres");
-					}else if(validacionContraseña == 4){
-						modelo.put("errorCambio", 1);
-						modelo.put("msjcambio", "La contraseña ingresada contiene caracteres inválidos");
-					}
-						List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
-						modelo.put("notas", notasUsuario);
-						modelo.put("nombre",misession.getAttribute("sessionNombre"));
-						modelo.put("nota", new Nota());
-						
-						return new ModelAndView("usuario",modelo);
-			}else{
+
+			if(validacionContraseña == 0) {
+				try{
+					usuarioLogeado.setPassword(usuarioLogeado.getPassword2());
+					servicioUsuario.cambiarContrasenia(idUsuarioLogueado, usuarioLogeado.getPassword());
+					modelo.put("errorCambio", 0);
+					modelo.put("msjcambio", "Se actualizo su contraseña exitosamente");
+				}catch(Exception e){
+					modelo.put("errorCambio", 1);
+					modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
+				}
+			}else if(validacionContraseña == 1){
 				modelo.put("errorCambio", 1);
-				modelo.put("msjcambio", "No paso la verificacion del captcha");
-				List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
-				modelo.put("notas", notasUsuario);
-				modelo.put("nombre",misession.getAttribute("sessionNombre"));
-				modelo.put("nota", new Nota());
-				return new ModelAndView("usuario",modelo);
+				modelo.put("msjcambio", "Complete todos los campos");
+			}else if(validacionContraseña == 2){
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "contraseña actual incorrecta");
+			}else if(validacionContraseña == 3){
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "La contraseña tiene menos de 12 caracteres");
+			}else if(validacionContraseña == 4){
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "La contraseña ingresada contiene caracteres inválidos");
+			}else if(validacionContraseña == 5){
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "La contraseña ingresada ya fue utilizada anteriormente.");
 			}
+			
+			List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
+			modelo.put("notas", notasUsuario);
+			modelo.put("nombre",misession.getAttribute("sessionNombre"));
+			modelo.put("nota", new Nota());
+
+			return new ModelAndView("usuario",modelo);
 		}else{
 			return new ModelAndView("redirect:login");
 		}	

@@ -19,16 +19,16 @@ public class HistorialPassword {
 	@ManyToOne(cascade = {CascadeType.ALL})
 	private Usuario usuario;
 	
-	private String Password;
-	private Boolean Activa; // true si la pass esta activa - false si no esta activa
+	private String password;
+	private Boolean activa; // true si la pass esta activa - false si no esta activa
 	
 	public HistorialPassword(){}
 
 	public HistorialPassword(Date fechaUltimaModificacion, Usuario usuario, String password, Boolean activa) {
 		this.fechaUltimaModificacion = fechaUltimaModificacion;
 		this.usuario = usuario;
-		Password = password;
-		Activa = activa;
+		this.password = password;
+		this.activa = activa;
 	}
 
 	public Long getId() {
@@ -56,18 +56,18 @@ public class HistorialPassword {
 	}
 
 	public String getPassword() {
-		return Password;
+		return password;
 	}
 
 	public void setPassword(String password) {
-		Password = password;
+		this.password = password;
 	}
 
 	public Boolean getActiva() {
-		return Activa;
+		return activa;
 	}
 
 	public void setActiva(Boolean activa) {
-		Activa = activa;
+		this.activa = activa;
 	}
 }

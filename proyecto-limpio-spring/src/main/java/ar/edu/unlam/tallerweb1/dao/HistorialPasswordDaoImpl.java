@@ -27,7 +27,8 @@ public class HistorialPasswordDaoImpl implements HistorialPasswordDao {
 		func.setPassword(descripcion);
 		  
 		  return (HistorialPassword) session.createCriteria(HistorialPassword.class)
-		  .add(Restrictions.eq("Password", func.getPassword() )) .uniqueResult();
+				  .add(Restrictions.eq("password", func.getPassword()))
+				  .uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -63,6 +64,21 @@ public class HistorialPasswordDaoImpl implements HistorialPasswordDao {
 		
 		session.save(historial);
 		
+	}
+
+	@Override
+	public List<HistorialPassword> getHistorialByIdUsuario(Long id) {
+		
+		final Session session = sessionFactory.getCurrentSession();
+		
+		List<HistorialPassword> contraseniasAnt = session.createCriteria(HistorialPassword.class)
+				.setMaxResults(12)
+				.createAlias("usuario", "usuarioBuscado")
+				.add(Restrictions.eq("usuarioBuscado.id", id))
+				.addOrder(Order.desc("fechaUltimaModificacion"))
+				.list();
+		
+		return contraseniasAnt;
 	}
 
 }

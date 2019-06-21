@@ -164,10 +164,10 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	public Integer validarPasswordUsuario(Usuario usuarioNuevo) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
 		String contraseniaActualAlmacenada = usuarioDao.getPassById(usuarioNuevo.getId()); 		
+
+		if(!this.ValidarContraseniasAnteriores(usuarioNuevo)) 			
+			return 5 ;
 		
-		String contraseniaEncrypt = PBKDF2.generateStorngPasswordHash(usuarioNuevo.getPassword()); 
-		HistorialPassword contraseniasAnt = historialPasswordDao.getPasswordByDesc(contraseniaEncrypt);			
-				
 		if(usuarioNuevo.getPassword().isEmpty() || usuarioNuevo.getPassword2().isEmpty() ){
 			return 1 ; // campos icompletos
 		}else if(!PBKDF2.validatePassword(usuarioNuevo.getPassword(), contraseniaActualAlmacenada)){
@@ -181,12 +181,24 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 			return 4 ;// la contraseña contiene espacios en blanco
 		}else if(!this.ValidarCaracteres(usuarioNuevo.getPassword2()) ) 			
 			return 4 ;// la contraseña contiene emogis
-		else if(contraseniasAnt != null && !contraseniasAnt.getActiva() ) 			
-			return 4 ;// la contraseña contiene emogis
 		
 		return 0;	
 	}
 	
+	private boolean ValidarContraseniasAnteriores(Usuario usuario) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		
+		List<HistorialPassword> contraseniasAnteriores = historialPasswordDao.getHistorialByIdUsuario(usuario.getId());
+
+		for (HistorialPassword historialPassword : contraseniasAnteriores) {
+			
+			if(PBKDF2.validatePassword(usuario.getPassword2(), historialPassword.getPassword())
+					&& historialPassword.getActiva() == true)
+				return false;	
+		}
+		
+		return true;
+	}
+
 	private boolean ValidarCaracteres(String password) {
 		
 		Pattern letter = Pattern.compile("[a-zA-z]");  
