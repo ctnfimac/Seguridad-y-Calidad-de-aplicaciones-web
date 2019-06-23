@@ -37,6 +37,10 @@ public class Usuario {
 	private Boolean recuperandoPass = false; // flag para garantizar que solo se realiza una vez el cambio de contraseña
 												// con el link enviado
 
+	private Boolean inicioSessionPorPrimeraVez = false;
+	private Boolean deleted = false; // indica si el usuario fue eliminado por falta de actividad (90 dias)
+	
+	
 	public Usuario() {
 	}
 
@@ -161,4 +165,23 @@ public class Usuario {
 	public void setFechaUltimaModificacion(Date fechaUltimaModificacion) {
 		this.fechaUltimaModificacion = fechaUltimaModificacion;
 	}
+
+	public Boolean getInicioSessionPorPrimeraVez() {
+		return inicioSessionPorPrimeraVez;
+	}
+
+	public void setInicioSessionPorPrimeraVez(Boolean inicioSessionPorPrimeraVez) {
+		this.inicioSessionPorPrimeraVez = inicioSessionPorPrimeraVez;
+	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	
+	
 }

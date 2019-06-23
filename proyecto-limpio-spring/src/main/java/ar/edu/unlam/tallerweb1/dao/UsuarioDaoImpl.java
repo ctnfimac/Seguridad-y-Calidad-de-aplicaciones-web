@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.unlam.tallerweb1.modelo.Funcionalidad;
 import ar.edu.unlam.tallerweb1.modelo.HistorialPassword;
+import ar.edu.unlam.tallerweb1.modelo.Nota;
 import ar.edu.unlam.tallerweb1.modelo.PBKDF2;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
@@ -76,10 +77,15 @@ public class UsuarioDaoImpl implements UsuarioDao {
 			usuario4.setNombre("usuario3");
 			usuario3.setHabilitado(false);
 			usuario4.setHabilitado(true);
-			usuario1.setFechaAltaDeUsuario(new Date());
-			usuario2.setFechaAltaDeUsuario(new Date());
-			usuario3.setFechaAltaDeUsuario(new Date());
-			usuario4.setFechaAltaDeUsuario(new Date());
+			Date fechaActual = new Date();
+			usuario1.setFechaAltaDeUsuario(fechaActual);
+			usuario2.setFechaAltaDeUsuario(fechaActual);
+			usuario3.setFechaAltaDeUsuario(fechaActual);
+			usuario4.setFechaAltaDeUsuario(fechaActual);
+			usuario1.setFechaUltimaModificacion(fechaActual);
+			usuario2.setFechaUltimaModificacion(fechaActual);
+			usuario3.setFechaUltimaModificacion(fechaActual);
+			usuario4.setFechaUltimaModificacion(fechaActual);
 			
 			session.save(usuario1);
 			session.save(usuario2);
@@ -105,7 +111,9 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	@Override
 	public void registrarUsuario(Usuario usuario) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		final Session session = sessionFactory.getCurrentSession();
-		usuario.setFechaAltaDeUsuario(new Date());
+		Date fechaActual = new Date();
+		usuario.setFechaAltaDeUsuario(fechaActual);
+		usuario.setFechaUltimaModificacion(fechaActual);
 
 		usuario.setPassword(PBKDF2.generateStorngPasswordHash(usuario.getPassword()));
 		
@@ -139,6 +147,8 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
 	     Usuario user = (Usuario)session.get(Usuario.class, idUsuario); 
 	     user.setPassword(contrasenia);
+	     if(user.getInicioSessionPorPrimeraVez() == false)
+	    	 user.setInicioSessionPorPrimeraVez(true);
 	     
 	     session.update(user); 
 	}
@@ -266,6 +276,29 @@ public class UsuarioDaoImpl implements UsuarioDao {
 			}
 		}
 		return idBuscado;
+	}
+
+	@Override
+	public void verificarCuentasInactivas() {
+		final Session session = sessionFactory.getCurrentSession();
+		List<Usuario> listaUsuarios = null;
+		
+		listaUsuarios = session.createCriteria(Usuario.class)
+						.add(Restrictions.and(Restrictions.eq("rol", "user"),Restrictions.eq("deleted", false)))
+						.list();
+		Date fecha = new Date();
+		
+		if(listaUsuarios != null ){
+			//recorro la lista y aquellos usuarios que tengan mas de 90 dias sin iniciar session los elimino
+			for(Usuario user : listaUsuarios){
+				Long diferenciaDeTiempo = fecha.getTime() - user.getFechaUltimaModificacion().getTime();
+				long diffMinutes = diferenciaDeTiempo / ( 24 * 60 * 60 * 1000) % 60; 
+				if(diffMinutes >= 90 ) {
+					user.setDeleted(true);
+					session.update(user);
+				}
+			}
+		}
 	}
 }
 

@@ -49,10 +49,13 @@ public class ControladorLogin {
 		if(misession.getAttribute("sessionId") == null)
 			misession.invalidate();
 		else modelo.put("rol", misession.getAttribute("ROL"));
-			servicioLogin.cargarDatos();
+		
+		servicioLogin.cargarDatos();
 		
 		Usuario usuario = new Usuario();
 		modelo.put("usuario", usuario);
+		
+		servicioUsuario.verificarCuentasInactivas();
 		
 		return new ModelAndView("login", modelo);
 	}
@@ -62,7 +65,7 @@ public class ControladorLogin {
 	// tag form:form
 	@RequestMapping(path = "/validar-login", method = RequestMethod.POST)
 	public ModelAndView validarLogin(@ModelAttribute("usuario") Usuario usuario, HttpServletRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
-
+		servicioUsuario.verificarCuentasInactivas();
 		String urlBaseDelSitio = "http://localhost:8080/proyecto-limpio-spring/";
 		String urlDeOrigen = request.getRequestURL().toString();
 		boolean contieneUrl = urlDeOrigen.contains(urlBaseDelSitio);
@@ -76,28 +79,35 @@ public class ControladorLogin {
 					this.cantIntentoIngreso = 0;
 
 					HttpSession session = request.getSession();
+					if (usuarioBuscado.getDeleted() != true){
+						session.setAttribute("ROL", usuarioBuscado.getRol());
+						session.setAttribute("sessionId", usuarioBuscado.getId());
+						session.setAttribute("sessionNombre", usuarioBuscado.getNombre());
+						session.setMaxInactiveInterval(15*60);
+	
+						Long id = usuarioBuscado.getId();
+						servicioLogin.saveLogIngreso(id);
+	
+							if (usuarioBuscado.getRol() == "admin") {
+								return new ModelAndView("redirect:/admin");
+							} else {
+								if (usuarioBuscado.getHabilitado() == true) {
+									/*if(usuarioBuscado.getInicioSessionPorPrimeraVez() == false){
+									model.put("usuario", new Usuario());
+									return new ModelAndView("cambiarPass1VezView",model);
+								}else*/ return new ModelAndView("redirect:/usuario");
+								} else {
+									model.put("error",
+											"Su usuario se encuentra deshabilitado. Comuniquese con el Administrador");
+									servicioLogin.saveLogIntentoIngreso("Intento Ingreso: Usuario Deshabilitado.");
+									return new ModelAndView("login", model);
+								}
+							}
+					}else{
+						model.put("error","Su usuario fue eliminado por inactividad. Comuniquese con el Administrador");
+						return new ModelAndView("login", model);
+					}	
 					
-					session.setAttribute("ROL", usuarioBuscado.getRol());
-					session.setAttribute("sessionId", usuarioBuscado.getId());
-					session.setAttribute("sessionNombre", usuarioBuscado.getNombre());
-					session.setMaxInactiveInterval(15*60);
-
-					Long id = usuarioBuscado.getId();
-					servicioLogin.saveLogIngreso(id);
-
-					if (usuarioBuscado.getRol() == "admin") {
-						return new ModelAndView("redirect:/admin");
-					} else {
-
-						if (usuarioBuscado.getHabilitado() == true) {
-							return new ModelAndView("redirect:/usuario");
-						} else {
-							model.put("error",
-									"Su usuario se encuentra deshabilitado. Comuniquese con el Administrador");
-							servicioLogin.saveLogIntentoIngreso("Intento Ingreso: Usuario Deshabilitado.");
-							return new ModelAndView("login", model);
-						}
-					}
 				} else {
 					String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 					boolean verificaCaptcha = ServicioCaptcha.verify("6LeUwKUUAAAAANonvOMzybP_z_rJukkVktfN6wE8",

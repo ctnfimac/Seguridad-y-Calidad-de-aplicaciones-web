@@ -1,6 +1,5 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,11 +16,15 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.unlam.tallerweb1.modelo.Log;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import ar.edu.unlam.tallerweb1.servicios.ServicioAdmin;
+import ar.edu.unlam.tallerweb1.servicios.ServicioUsuario;
 @Controller
 public class ContoladorAdmin {
 	
 	@Inject
 	private ServicioAdmin servicioAdmin;
+	
+	@Inject
+	private ServicioUsuario servicioUsuario;
 	
 	@RequestMapping(path="/admin")
 	public ModelAndView admin(HttpServletRequest request){
@@ -39,6 +42,7 @@ public class ContoladorAdmin {
 	@RequestMapping(path="/admin-historial", method= RequestMethod.GET)
 	public ModelAndView adminHistorial(@RequestParam(value="idUsuario") Long id,HttpServletRequest request){
 		HttpSession misession= (HttpSession) request.getSession();
+		servicioUsuario.verificarCuentasInactivas();
 		if(misession.getAttribute("sessionId") != null) {
 			ModelMap modelo = new ModelMap();
 			List<Log> historial = servicioAdmin.getLogsByIdUsuario(id);
@@ -52,6 +56,7 @@ public class ContoladorAdmin {
 	@RequestMapping(path="/historial-logs", method= RequestMethod.GET)
 	public ModelAndView historialLogs(HttpServletRequest request){
 		HttpSession misession= (HttpSession) request.getSession();
+		servicioUsuario.verificarCuentasInactivas();
 		if(misession.getAttribute("sessionId") != null) {
 			ModelMap modelo = new ModelMap();
 			List<Log> historial = servicioAdmin.getAllLogs();

@@ -254,6 +254,11 @@ public class ServicioUsuarioImpl implements ServicioUsuario{
 	public Usuario GetUsuarioById(Long idUsuario) {
 		return usuarioDao.GetUsuarioById(idUsuario);
 	}
+	
+	@Override
+	public void verificarCuentasInactivas(){
+		usuarioDao.verificarCuentasInactivas();
+	}
 
 }
 

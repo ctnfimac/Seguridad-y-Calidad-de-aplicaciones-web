@@ -1,13 +1,16 @@
 package ar.edu.unlam.tallerweb1.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+
 import ar.edu.unlam.tallerweb1.modelo.Log;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
@@ -37,8 +40,20 @@ public class LogDaoImpl implements LogDao {
 	@Override
 	public List<Log> getAllLogs() {
 		final Session session = sessionFactory.getCurrentSession();
-		return  session.createCriteria(Log.class)
-				.addOrder(Order.desc("fechaModificacion"))
+		
+		 List<Usuario> usuariosNoEliminados = session.createCriteria(Usuario.class)
+				.add(Restrictions.eq("deleted", false))
 				.list();
+		
+		 List<Long> listaIds = new ArrayList<Long>();
+			for(Usuario usuario : usuariosNoEliminados){
+				listaIds.add(usuario.getId());
+			}
+	
+		return  session.createCriteria(Log.class)
+		.add(Restrictions.in("idUsuario", listaIds))
+		.addOrder(Order.desc("fechaModificacion"))
+		.list();
+
 	}
 }

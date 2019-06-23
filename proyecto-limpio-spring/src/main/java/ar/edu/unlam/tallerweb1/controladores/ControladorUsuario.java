@@ -50,6 +50,14 @@ public class ControladorUsuario {
 		if(misession.getAttribute("sessionId") != null) {
 			if(servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))){
 				ModelMap modelo = new ModelMap();
+				
+				Usuario usuarioBuscado = servicioUsuario.GetUsuarioById((long) misession.getAttribute("sessionId"));
+				
+//				if(usuarioBuscado.getInicioSessionPorPrimeraVez() == false){
+//					modelo.put("usuario", new Usuario());
+//					return new ModelAndView("cambiarPass1VezView",modelo);
+//				}
+				
 				Nota nota = new Nota();
 				modelo.put("nota", nota);
 				List<Nota> notasUsuario = servicioNota.getByUsuario((long) misession.getAttribute("sessionId"));
@@ -69,9 +77,18 @@ public class ControladorUsuario {
 	@RequestMapping(path="/usuario-historial")
 	public ModelAndView irAusuarioHistorial(HttpServletRequest request){
 		HttpSession misession= (HttpSession) request.getSession();
+		ModelMap modelo = new ModelMap();
+		
+		Usuario usuarioBuscado = servicioUsuario.GetUsuarioById((long) misession.getAttribute("sessionId"));
+		
+//		if(usuarioBuscado.getInicioSessionPorPrimeraVez() == false){
+//			modelo.put("usuario", new Usuario());
+//			return new ModelAndView("cambiarPass1VezView",modelo);
+//		}
+		
 		if(misession.getAttribute("sessionId") != null) {
 			if(servicioUsuario.getHabilitado((long) misession.getAttribute("sessionId"))){
-				ModelMap modelo = new ModelMap();
+				
 				List<Log> logUsuario = servicioLog.getLogByUsuario((long) misession.getAttribute("sessionId"));
 				modelo.put("logsUsuario", logUsuario);
 				modelo.put("id", (long) misession.getAttribute("sessionId"));
@@ -108,11 +125,23 @@ public class ControladorUsuario {
 	    String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 	    boolean verificaCaptcha = ServicioCaptcha.verify("6LeUwKUUAAAAANonvOMzybP_z_rJukkVktfN6wE8", gRecaptchaResponse);
 	    
+	    Usuario usuarioBuscado = null;
+	    usuarioBuscado = servicioUsuario.getUsuarioByEmail(usuarioNuevo.getEmail());
+	    Boolean usuarioConCuentaEliminada = false;
+	    if(usuarioBuscado != null ){
+	    	if(usuarioBuscado.getDeleted()) usuarioConCuentaEliminada = true;
+	    }
+	    
+	    
 		try{	
-			if(validacionUsuario == 0 && validacionPassword == 0 && verificaCaptcha) {
+			
+			if(validacionUsuario == 0 && validacionPassword == 0 && verificaCaptcha && !usuarioConCuentaEliminada) {
 				servicioLogin.registrarUsuario(usuarioNuevo);
 				modelo.put("errorRegistro", 0);
 				modelo.put("msjregistro", "Se registro exitosamente, <a href='login'>inicie sesión</a>");
+			}else if(validacionUsuario == 5 && validacionPassword == 0 && verificaCaptcha && usuarioConCuentaEliminada) {
+				modelo.put("errorRegistro", 1);
+				modelo.put("msjregistro", "Ya existia una cuenta con el mismo email, comuniquese con el administrador");
 			}else if(validacionUsuario == 1 || validacionPassword == 1){
 				modelo.put("errorRegistro", 1);
 				modelo.put("msjregistro", "Complete todos los campos");
@@ -304,6 +333,7 @@ public class ControladorUsuario {
 
 	}
 	
+	
 	@RequestMapping(path="/actualizarPass", method = RequestMethod.POST)
 	public ModelAndView actualizarPass(@ModelAttribute("usuario") Usuario usuario,HttpServletRequest request){
 		Long idUsuario = this.servicioUsuario.getId(usuario.getIdE()) ;
@@ -346,6 +376,53 @@ public class ControladorUsuario {
 			modelo.put("id", usuario.getIdE());
 			modelo.put("usuario", new Usuario());
 			return new ModelAndView("cambiarContrasenia",modelo);
+		}else{
+			return new ModelAndView("redirect:login");
+		}
+	}
+	
+	@RequestMapping(path="/cambiarPass1VezView", method= RequestMethod.GET)
+	public ModelAndView cambiarPass1VezView(){
+		ModelMap modelo = new ModelMap();
+		modelo.put("usuario", new Usuario());
+	    return new ModelAndView("cambiarPass1VezView",modelo);
+	}
+	
+	@RequestMapping(path="/actualizarPassPorPrimeraVez", method = RequestMethod.POST)
+	public ModelAndView actualizarPassPorPrimeraVez(@ModelAttribute("usuario") Usuario usuario,HttpServletRequest request){
+		HttpSession misession= (HttpSession) request.getSession();
+		Long idUsuario = (Long) misession.getAttribute("sessionId");// this.servicioUsuario.getId(usuario.getIdE()) ;
+		if(idUsuario != 0 ) {
+			ModelMap modelo = new ModelMap();
+			String contraseniaAnt = usuario.getPassword();
+			String contraseniaNueva = usuario.getPassword2();
+			try{
+				if(!contraseniaAnt.isEmpty() && !contraseniaNueva.isEmpty()){
+					if(contraseniaAnt.equals(contraseniaNueva)){
+							if(contraseniaAnt.length() >= 12 && contraseniaNueva.length() >= 12){
+								servicioUsuario.cambiarContrasenia(idUsuario, contraseniaNueva);
+								modelo.put("errorCambio", 3);
+								modelo.put("msjcambio", "Muchas gracias, ya puede ir a su <a href='usuario'>panel de usuario</a>");
+							}else{
+								modelo.put("errorCambio", 1);
+								modelo.put("msjcambio", "las contraseñas tienen menos de 12 caracteres");
+							}
+						}
+						else{
+							modelo.put("errorCambio", 1);
+							modelo.put("msjcambio", "las contraseñas son distintas");
+						}
+				}else{
+					modelo.put("errorCambio", 1);
+					modelo.put("msjcambio", "complete todos los campos");
+				}
+			}catch(Exception e){
+				modelo.put("errorCambio", 1);
+				modelo.put("msjcambio", "Hubo problemas para actualizar la contraseña");
+			}
+			modelo.put("id", usuario.getIdE());
+			modelo.put("usuario", new Usuario());
+			return new ModelAndView("cambiarPass1VezView",modelo);
 		}else{
 			return new ModelAndView("redirect:login");
 		}

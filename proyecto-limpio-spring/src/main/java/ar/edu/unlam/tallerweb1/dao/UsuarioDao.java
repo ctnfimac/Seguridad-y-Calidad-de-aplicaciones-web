@@ -22,4 +22,5 @@ public interface UsuarioDao {
 	void persistirSolicitudCambioDeContrasenia(Long id, Date fechaSolicitud,String keyLog);
 	Integer usuarioCambiandoPass(String id, String keylog);
 	Long getId(String idEncript);
+	void verificarCuentasInactivas();
 }

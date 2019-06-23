@@ -23,4 +23,5 @@ public interface ServicioUsuario {
 	public Integer validarPasswordUsuario(Usuario usuarioNuevo) throws NoSuchAlgorithmException, InvalidKeySpecException;
 	Integer validarPasswordUsuarioAlRegistrar(Usuario usuarioNuevo);
 	Usuario GetUsuarioById(Long idUsuario);
+	void verificarCuentasInactivas();
 }
