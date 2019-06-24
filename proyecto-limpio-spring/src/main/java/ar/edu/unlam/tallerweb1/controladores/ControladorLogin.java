@@ -73,12 +73,19 @@ public class ControladorLogin {
 		if (contieneUrl) {
 			ModelMap model = new ModelMap();
 			Usuario usuarioBuscado = servicioLogin.consultarUsuario(usuario);
+
+			HttpSession session = request.getSession();
+			
+			if(session.getAttribute("sessionId") != null && usuarioBuscado != null && session.getAttribute("sessionId") == usuarioBuscado.getId()) {
+				model.put("error","Ya se encuentra una sesion Activa. Cierrela y vuelva a ingreasar.");
+				return new ModelAndView("login", model);
+			}
+				
 			Boolean mostrarCaptcha = false;
 			if (usuarioBuscado != null) {
 				if (!captchaActivadoLogin) {
 					this.cantIntentoIngreso = 0;
 
-					HttpSession session = request.getSession();
 					if (usuarioBuscado.getDeleted() != true){
 						session.setAttribute("ROL", usuarioBuscado.getRol());
 						session.setAttribute("sessionId", usuarioBuscado.getId());
@@ -117,8 +124,6 @@ public class ControladorLogin {
 						this.contadorDeIngresosConCaptcha = 0;
 						this.captchaActivadoLogin = false;
 
-						HttpSession session = request.getSession();
-						
 						session.setAttribute("ROL", usuarioBuscado.getRol());
 						session.setAttribute("sessionId", usuarioBuscado.getId());
 						session.setAttribute("sessionNombre", usuarioBuscado.getNombre());
